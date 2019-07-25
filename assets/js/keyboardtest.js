@@ -23,26 +23,25 @@ window.addEventListener("load", function() {
       key.addEventListener("mouseup", function() {
          key.style.fill = key.dataset.fill;
          if (typeof note !== "undefined") {
-            gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
+            gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.03);
 
             setTimeout(() => {
                note.stop();
-            }, 500);  
+            }, 30);  
          }
       });
 
       key.addEventListener("mouseout", function() {
          key.style.fill = key.dataset.fill;
          if (typeof note !== "undefined") {
-            gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
+            gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.03);
 
             setTimeout(() => {
                note.stop();
-            }, 500);  
+            }, 30);  
          }
       });
    }
-
 });
 
 function playSine(freq) {
