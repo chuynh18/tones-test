@@ -22,20 +22,24 @@ window.addEventListener("load", function() {
 
       key.addEventListener("mouseup", function() {
          key.style.fill = key.dataset.fill;
-         gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
+         if (typeof note !== "undefined") {
+            gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
 
-         setTimeout(() => {
-            note.stop();
-         }, 500);  
+            setTimeout(() => {
+               note.stop();
+            }, 500);  
+         }
       });
 
       key.addEventListener("mouseout", function() {
          key.style.fill = key.dataset.fill;
-         gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
+         if (typeof note !== "undefined") {
+            gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
 
-         setTimeout(() => {
-            note.stop();
-         }, 500);  
+            setTimeout(() => {
+               note.stop();
+            }, 500);  
+         }
       });
    }
 
