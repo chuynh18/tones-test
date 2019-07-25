@@ -24,7 +24,7 @@ window.addEventListener("load", function() {
          key.style.fill = key.dataset.fill;
          gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
 
-         setTimeout(function() {
+         setTimeout(() => {
             note.stop();
          }, 500);  
       });
@@ -33,7 +33,7 @@ window.addEventListener("load", function() {
          key.style.fill = key.dataset.fill;
          gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.5);
 
-         setTimeout(function() {
+         setTimeout(() => {
             note.stop();
          }, 500);  
       });
