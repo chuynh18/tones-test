@@ -1,6 +1,8 @@
 "use strict";
 
 let kb;
+let audio;
+let gain;
 let note;
 
 window.addEventListener("load", function() {
@@ -20,12 +22,20 @@ window.addEventListener("load", function() {
 
       key.addEventListener("mouseup", function() {
          key.style.fill = key.dataset.fill;
-         note.stop();
+         gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.1);
+
+         setTimeout(function() {
+            note.stop();
+         }, 100);  
       });
 
       key.addEventListener("mouseout", function() {
          key.style.fill = key.dataset.fill;
-         note.stop();
+         gain.gain.linearRampToValueAtTime(0.000001, audio.currentTime + 0.1);
+         
+         setTimeout(function() {
+            note.stop();
+         }, 100);  
       });
    }
 
@@ -36,6 +46,8 @@ function playSine(freq) {
    const gainNode = audioContext.createGain();
    const oscillator = audioContext.createOscillator();
 
+   audio = audioContext;
+   gain = gainNode;
    note = oscillator;
    
    oscillator.connect(gainNode);
