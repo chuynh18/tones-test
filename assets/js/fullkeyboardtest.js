@@ -12,28 +12,33 @@ window.addEventListener("load", function() {
 
    for (let i = 0; i < rects.length; i++) {
       const key = rects[i];
-      console.log(key.id);
 
       preload(`assets/audio/${Number(key.id)}.webm`, state.audio);
 
       key.addEventListener("mousedown", function() {
-         key.style.fill = "red";
-         state.audio[i].play();
+         startPlaying(i);
       });
 
       key.addEventListener("mouseup", function() {
-         key.style.fill = key.dataset.fill;
-         state.audio[i].pause();
-         state.audio[i].currentTime = 0;
+         stopPlaying(i);
       });
 
       key.addEventListener("mouseout", function() {
-         key.style.fill = key.dataset.fill;
-         state.audio[i].pause();
-         state.audio[i].currentTime = 0;
+         stopPlaying(i);
       });
    }
 });
+
+function startPlaying(i) {
+   key.style.fill = "red";
+   state.audio[i].play();
+}
+
+function stopPlaying(i) {
+   key.style.fill = key.dataset.fill;
+   state.audio[i].pause();
+   state.audio[i].currentTime = 0;
+}
 
 function preload(url, dest) {
    const audio = new Audio();
