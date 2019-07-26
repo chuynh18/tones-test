@@ -14,7 +14,7 @@ window.addEventListener("load", function() {
       const key = rects[i];
       console.log(key.id);
 
-      preload(`assets/audio/${Number(key.id) - 1}.webm`, state.audio);
+      preload(`assets/audio/${Number(key.id)}.webm`, state.audio);
 
       key.addEventListener("mousedown", function() {
          key.style.fill = "red";
