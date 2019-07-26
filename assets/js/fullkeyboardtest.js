@@ -16,25 +16,25 @@ window.addEventListener("load", function() {
       preload(`assets/audio/${Number(key.id)}.webm`, state.audio);
 
       key.addEventListener("mousedown", function() {
-         startPlaying(i);
+         startPlaying(i, key);
       });
 
       key.addEventListener("mouseup", function() {
-         stopPlaying(i);
+         stopPlaying(i, key);
       });
 
       key.addEventListener("mouseout", function() {
-         stopPlaying(i);
+         stopPlaying(i, key);
       });
    }
 });
 
-function startPlaying(i) {
+function startPlaying(i, key) {
    key.style.fill = "red";
    state.audio[i].play();
 }
 
-function stopPlaying(i) {
+function stopPlaying(i, key) {
    key.style.fill = key.dataset.fill;
    state.audio[i].pause();
    state.audio[i].currentTime = 0;
