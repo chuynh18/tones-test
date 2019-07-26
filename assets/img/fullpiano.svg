@@ -28,93 +28,95 @@
    show the entire 88 keys of a piano.
 -->
 
+   <!-- White keys -->
+   <rect id="1" style="fill:#ffffff;stroke:#000000" x="0.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="3" style="fill:#ffffff;stroke:#000000" x="23.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="4" style="fill:#ffffff;stroke:#000000" x="46.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="6" style="fill:#ffffff;stroke:#000000" x="69.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="8" style="fill:#ffffff;stroke:#000000" x="92.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="9" style="fill:#ffffff;stroke:#000000" x="115.49999" y="0" width="23" height="120" data-fill="white" />
+   <rect id="11" style="fill:#ffffff;stroke:#000000" x="138.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="13" style="fill:#ffffff;stroke:#000000" x="161.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="15" style="fill:#ffffff;stroke:#000000" x="184.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="16" style="fill:#ffffff;stroke:#000000" x="207.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="18" style="fill:#ffffff;stroke:#000000" x="230.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="20" style="fill:#ffffff;stroke:#000000" x="253.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="21" style="fill:#ffffff;stroke:#000000" x="276.50003" y="0" width="23" height="120" data-fill="white" />
+   <rect id="23" style="fill:#ffffff;stroke:#000000" x="299.50003" y="0" width="23" height="120" data-fill="white" />
+   <rect id="25" style="fill:#ffffff;stroke:#000000" x="322.50003" y="0" width="23" height="120" data-fill="white" />
+   <rect id="27" style="fill:#ffffff;stroke:#000000" x="345.50003" y="0" width="23" height="120" data-fill="white" />
+   <rect id="28" style="fill:#ffffff;stroke:#000000" x="368.50003" y="0" width="23" height="120" data-fill="white" />
+   <rect id="30" style="fill:#ffffff;stroke:#000000" x="391.50003" y="0" width="23" height="120" data-fill="white" />
+   <rect id="32" style="fill:#ffffff;stroke:#000000" x="414.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="33" style="fill:#ffffff;stroke:#000000" x="437.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="35" style="fill:#ffffff;stroke:#000000" x="460.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="37" style="fill:#ffffff;stroke:#000000" x="483.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="39" style="fill:#ffffff;stroke:#000000" x="506.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="40" style="fill:#ffffff;stroke:#000000" x="529.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="42" style="fill:#ffffff;stroke:#000000" x="552.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="44" style="fill:#ffffff;stroke:#000000" x="575.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="45" style="fill:#ffffff;stroke:#000000" x="598.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="47" style="fill:#ffffff;stroke:#000000" x="621.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="49" style="fill:#ffffff;stroke:#000000" x="644.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="51" style="fill:#ffffff;stroke:#000000" x="667.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="52" style="fill:#ffffff;stroke:#000000" x="690.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="54" style="fill:#ffffff;stroke:#000000" x="713.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="56" style="fill:#ffffff;stroke:#000000" x="736.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="57" style="fill:#ffffff;stroke:#000000" x="759.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="59" style="fill:#ffffff;stroke:#000000" x="782.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="61" style="fill:#ffffff;stroke:#000000" x="805.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="63" style="fill:#ffffff;stroke:#000000" x="828.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="64" style="fill:#ffffff;stroke:#000000" x="851.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="66" style="fill:#ffffff;stroke:#000000" x="874.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="68" style="fill:#ffffff;stroke:#000000" x="897.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="69" style="fill:#ffffff;stroke:#000000" x="920.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="71" style="fill:#ffffff;stroke:#000000" x="943.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="73" style="fill:#ffffff;stroke:#000000" x="966.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="75" style="fill:#ffffff;stroke:#000000" x="989.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="76" style="fill:#ffffff;stroke:#000000" x="1012.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="78" style="fill:#ffffff;stroke:#000000" x="1035.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="80" style="fill:#ffffff;stroke:#000000" x="1058.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="81" style="fill:#ffffff;stroke:#000000" x="1081.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="83" style="fill:#ffffff;stroke:#000000" x="1104.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="85" style="fill:#ffffff;stroke:#000000" x="1127.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="87" style="fill:#ffffff;stroke:#000000" x="1150.5" y="0" width="23" height="120" data-fill="white" />
+   <rect id="88" style="fill:#ffffff;stroke:#000000" x="1173.5" y="0" width="23" height="120" data-fill="white" />
 
-<rect id="1" style="fill:#ffffff;stroke:#000000" x="0.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="2" style="fill:#000000;stroke:#000000" x="20.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="3" style="fill:#ffffff;stroke:#000000" x="23.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="4" style="fill:#ffffff;stroke:#000000" x="46.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="5" style="fill:#000000;stroke:#000000" x="60.833344" y="0" width="13" height="80" data-fill="black" />
-<rect id="6" style="fill:#ffffff;stroke:#000000" x="69.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="7" style="fill:#000000;stroke:#000000" x="88.166656" y="0" width="13" height="80" data-fill="black" />
-<rect id="8" style="fill:#ffffff;stroke:#000000" x="92.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="9" style="fill:#ffffff;stroke:#000000" x="115.49999" y="0" width="23" height="120" data-fill="white" />
-<rect id="10" style="fill:#000000;stroke:#000000" x="128.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="11" style="fill:#ffffff;stroke:#000000" x="138.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="12" style="fill:#000000;stroke:#000000" x="154.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="13" style="fill:#ffffff;stroke:#000000" x="161.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="14" style="fill:#000000;stroke:#000000" x="181.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="15" style="fill:#ffffff;stroke:#000000" x="184.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="16" style="fill:#ffffff;stroke:#000000" x="207.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="17" style="fill:#000000;stroke:#000000" x="221.83334" y="0" width="13" height="80" data-fill="black" />
-<rect id="18" style="fill:#ffffff;stroke:#000000" x="230.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="19" style="fill:#000000;stroke:#000000" x="249.16666" y="0" width="13" height="80" data-fill="black" />
-<rect id="20" style="fill:#ffffff;stroke:#000000" x="253.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="21" style="fill:#ffffff;stroke:#000000" x="276.50003" y="0" width="23" height="120" data-fill="white" />
-<rect id="22" style="fill:#000000;stroke:#000000" x="289.75003" y="0" width="13" height="80" data-fill="black" />
-<rect id="23" style="fill:#ffffff;stroke:#000000" x="299.50003" y="0" width="23" height="120" data-fill="white" />
-<rect id="24" style="fill:#000000;stroke:#000000" x="315.75003" y="0" width="13" height="80" data-fill="black" />
-<rect id="25" style="fill:#ffffff;stroke:#000000" x="322.50003" y="0" width="23" height="120" data-fill="white" />
-<rect id="26" style="fill:#000000;stroke:#000000" x="342.25003" y="0" width="13" height="80" data-fill="black" />
-<rect id="27" style="fill:#ffffff;stroke:#000000" x="345.50003" y="0" width="23" height="120" data-fill="white" />
-<rect id="28" style="fill:#ffffff;stroke:#000000" x="368.50003" y="0" width="23" height="120" data-fill="white" />
-<rect id="29" style="fill:#000000;stroke:#000000" x="382.83334" y="0" width="13" height="80" data-fill="black" />
-<rect id="30" style="fill:#ffffff;stroke:#000000" x="391.50003" y="0" width="23" height="120" data-fill="white" />
-<rect id="31" style="fill:#000000;stroke:#000000" x="410.16663" y="0" width="13" height="80" data-fill="black" />
-<rect id="32" style="fill:#ffffff;stroke:#000000" x="414.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="33" style="fill:#ffffff;stroke:#000000" x="437.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="34" style="fill:#000000;stroke:#000000" x="450.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="35" style="fill:#ffffff;stroke:#000000" x="460.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="36" style="fill:#000000;stroke:#000000" x="476.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="37" style="fill:#ffffff;stroke:#000000" x="483.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="38" style="fill:#000000;stroke:#000000" x="503.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="39" style="fill:#ffffff;stroke:#000000" x="506.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="40" style="fill:#ffffff;stroke:#000000" x="529.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="41" style="fill:#000000;stroke:#000000" x="543.83337" y="0" width="13" height="80" data-fill="black" />
-<rect id="42" style="fill:#ffffff;stroke:#000000" x="552.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="43" style="fill:#000000;stroke:#000000" x="571.16669" y="0" width="13" height="80" data-fill="black" />
-<rect id="44" style="fill:#ffffff;stroke:#000000" x="575.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="45" style="fill:#ffffff;stroke:#000000" x="598.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="46" style="fill:#000000;stroke:#000000" x="611.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="47" style="fill:#ffffff;stroke:#000000" x="621.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="48" style="fill:#000000;stroke:#000000" x="637.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="49" style="fill:#ffffff;stroke:#000000" x="644.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="50" style="fill:#000000;stroke:#000000" x="664.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="51" style="fill:#ffffff;stroke:#000000" x="667.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="52" style="fill:#ffffff;stroke:#000000" x="690.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="53" style="fill:#000000;stroke:#000000" x="704.83337" y="0" width="13" height="80" data-fill="black" />
-<rect id="54" style="fill:#ffffff;stroke:#000000" x="713.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="55" style="fill:#000000;stroke:#000000" x="732.16663" y="0" width="13" height="80" data-fill="black" />
-<rect id="56" style="fill:#ffffff;stroke:#000000" x="736.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="57" style="fill:#ffffff;stroke:#000000" x="759.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="58" style="fill:#000000;stroke:#000000" x="772.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="59" style="fill:#ffffff;stroke:#000000" x="782.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="60" style="fill:#000000;stroke:#000000" x="798.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="61" style="fill:#ffffff;stroke:#000000" x="805.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="62" style="fill:#000000;stroke:#000000" x="825.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="63" style="fill:#ffffff;stroke:#000000" x="828.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="64" style="fill:#ffffff;stroke:#000000" x="851.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="65" style="fill:#000000;stroke:#000000" x="865.83337" y="0" width="13" height="80" data-fill="black" />
-<rect id="66" style="fill:#ffffff;stroke:#000000" x="874.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="67" style="fill:#000000;stroke:#000000" x="893.16669" y="0" width="13" height="80" data-fill="black" />
-<rect id="68" style="fill:#ffffff;stroke:#000000" x="897.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="69" style="fill:#ffffff;stroke:#000000" x="920.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="70" style="fill:#000000;stroke:#000000" x="933.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="71" style="fill:#ffffff;stroke:#000000" x="943.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="72" style="fill:#000000;stroke:#000000" x="959.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="73" style="fill:#ffffff;stroke:#000000" x="966.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="74" style="fill:#000000;stroke:#000000" x="986.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="75" style="fill:#ffffff;stroke:#000000" x="989.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="76" style="fill:#ffffff;stroke:#000000" x="1012.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="77" style="fill:#000000;stroke:#000000" x="1026.8334" y="0" width="13" height="80" data-fill="black" />
-<rect id="78" style="fill:#ffffff;stroke:#000000" x="1035.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="79" style="fill:#000000;stroke:#000000" x="1054.1666" y="0" width="13" height="80" data-fill="black" />
-<rect id="80" style="fill:#ffffff;stroke:#000000" x="1058.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="81" style="fill:#ffffff;stroke:#000000" x="1081.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="82" style="fill:#000000;stroke:#000000" x="1094.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="83" style="fill:#ffffff;stroke:#000000" x="1104.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="84" style="fill:#000000;stroke:#000000" x="1120.75" y="0" width="13" height="80" data-fill="black" />
-<rect id="85" style="fill:#ffffff;stroke:#000000" x="1127.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="86" style="fill:#000000;stroke:#000000" x="1147.25" y="0" width="13" height="80" data-fill="black" />
-<rect id="87" style="fill:#ffffff;stroke:#000000" x="1150.5" y="0" width="23" height="120" data-fill="white" />
-<rect id="88" style="fill:#ffffff;stroke:#000000" x="1173.5" y="0" width="23" height="120" data-fill="white" />
+   <!-- Black keys -->
+   <rect id="2" style="fill:#000000;stroke:#000000" x="20.25" y="0" width="13" height="80" data-fill="black" />
+   <rect id="5" style="fill:#000000;stroke:#000000" x="60.833344" y="0" width="13" height="80" data-fill="black" />
+   <rect id="7" style="fill:#000000;stroke:#000000" x="88.166656" y="0" width="13" height="80" data-fill="black" />
+   <rect id="10" style="fill:#000000;stroke:#000000" x="128.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="12" style="fill:#000000;stroke:#000000" x="154.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="14" style="fill:#000000;stroke:#000000" x="181.25" y="0" width="13" height="80" data-fill="black" />
+   <rect id="17" style="fill:#000000;stroke:#000000" x="221.83334" y="0" width="13" height="80" data-fill="black" />
+   <rect id="19" style="fill:#000000;stroke:#000000" x="249.16666" y="0" width="13" height="80" data-fill="black" />
+   <rect id="22" style="fill:#000000;stroke:#000000" x="289.75003" y="0" width="13" height="80" data-fill="black" />
+   <rect id="24" style="fill:#000000;stroke:#000000" x="315.75003" y="0" width="13" height="80" data-fill="black" />
+   <rect id="26" style="fill:#000000;stroke:#000000" x="342.25003" y="0" width="13" height="80" data-fill="black" />
+   <rect id="29" style="fill:#000000;stroke:#000000" x="382.83334" y="0" width="13" height="80" data-fill="black" />
+   <rect id="31" style="fill:#000000;stroke:#000000" x="410.16663" y="0" width="13" height="80" data-fill="black" />
+   <rect id="34" style="fill:#000000;stroke:#000000" x="450.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="36" style="fill:#000000;stroke:#000000" x="476.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="38" style="fill:#000000;stroke:#000000" x="503.25" y="0" width="13" height="80" data-fill="black" />
+   <rect id="41" style="fill:#000000;stroke:#000000" x="543.83337" y="0" width="13" height="80" data-fill="black" />
+   <rect id="43" style="fill:#000000;stroke:#000000" x="571.16669" y="0" width="13" height="80" data-fill="black" />
+   <rect id="46" style="fill:#000000;stroke:#000000" x="611.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="48" style="fill:#000000;stroke:#000000" x="637.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="50" style="fill:#000000;stroke:#000000" x="664.25" y="0" width="13" height="80" data-fill="black" />
+   <rect id="53" style="fill:#000000;stroke:#000000" x="704.83337" y="0" width="13" height="80" data-fill="black" />
+   <rect id="55" style="fill:#000000;stroke:#000000" x="732.16663" y="0" width="13" height="80" data-fill="black" />
+   <rect id="58" style="fill:#000000;stroke:#000000" x="772.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="60" style="fill:#000000;stroke:#000000" x="798.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="62" style="fill:#000000;stroke:#000000" x="825.25" y="0" width="13" height="80" data-fill="black" />
+   <rect id="65" style="fill:#000000;stroke:#000000" x="865.83337" y="0" width="13" height="80" data-fill="black" />
+   <rect id="67" style="fill:#000000;stroke:#000000" x="893.16669" y="0" width="13" height="80" data-fill="black" />
+   <rect id="70" style="fill:#000000;stroke:#000000" x="933.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="72" style="fill:#000000;stroke:#000000" x="959.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="74" style="fill:#000000;stroke:#000000" x="986.25" y="0" width="13" height="80" data-fill="black" />
+   <rect id="77" style="fill:#000000;stroke:#000000" x="1026.8334" y="0" width="13" height="80" data-fill="black" />
+   <rect id="79" style="fill:#000000;stroke:#000000" x="1054.1666" y="0" width="13" height="80" data-fill="black" />
+   <rect id="82" style="fill:#000000;stroke:#000000" x="1094.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="84" style="fill:#000000;stroke:#000000" x="1120.75" y="0" width="13" height="80" data-fill="black" />
+   <rect id="86" style="fill:#000000;stroke:#000000" x="1147.25" y="0" width="13" height="80" data-fill="black" />
 </svg>

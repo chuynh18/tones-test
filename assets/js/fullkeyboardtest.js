@@ -11,27 +11,26 @@ window.addEventListener("load", function() {
    const rects = state.kb.getElementsByTagName("rect");
 
    for (let i = 0; i < rects.length; i++) {
-      preload(`assets/audio/${i + 1}.webm`, state.audio);
-
       const key = rects[i];
+      console.log(key.id);
 
-      console.log(key)
+      preload(`assets/audio/${Number(key.id) - 1}.webm`, state.audio);
 
       key.addEventListener("mousedown", function() {
          key.style.fill = "red";
-         state.audio[i].play();
+         state.audio[Number(key.id) - 1].play();
       });
 
       key.addEventListener("mouseup", function() {
          key.style.fill = key.dataset.fill;
-         state.audio[i].pause();
-         state.audio[i].currentTime = 0;
+         state.audio[Number(key.id) - 1].pause();
+         state.audio[Number(key.id) - 1].currentTime = 0;
       });
 
       key.addEventListener("mouseout", function() {
          key.style.fill = key.dataset.fill;
-         state.audio[i].pause();
-         state.audio[i].currentTime = 0;
+         state.audio[Number(key.id) - 1].pause();
+         state.audio[Number(key.id) - 1].currentTime = 0;
       });
    }
 });
