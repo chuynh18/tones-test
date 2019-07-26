@@ -18,19 +18,19 @@ window.addEventListener("load", function() {
 
       key.addEventListener("mousedown", function() {
          key.style.fill = "red";
-         state.audio[Number(key.id) - 1].play();
+         state.audio[i].play();
       });
 
       key.addEventListener("mouseup", function() {
          key.style.fill = key.dataset.fill;
-         state.audio[Number(key.id) - 1].pause();
-         state.audio[Number(key.id) - 1].currentTime = 0;
+         state.audio[i].pause();
+         state.audio[i].currentTime = 0;
       });
 
       key.addEventListener("mouseout", function() {
          key.style.fill = key.dataset.fill;
-         state.audio[Number(key.id) - 1].pause();
-         state.audio[Number(key.id) - 1].currentTime = 0;
+         state.audio[i].pause();
+         state.audio[i].currentTime = 0;
       });
    }
 });
