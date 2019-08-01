@@ -7,6 +7,7 @@ const CONSTANTS = {
 }
 
 const state = {
+   mouseDown: false,
    audioContext: new AudioContext(),
    kb: undefined,
    audio: [],
@@ -22,6 +23,14 @@ window.addEventListener("load", function() {
       });
    }, {once: true});
 
+   state.kb.addEventListener("mousedown", function() {
+      state.mouseDown = true;
+   });
+
+   state.kb.addEventListener("mouseup", function() {
+      state.mouseDown = false;
+   });
+
    const rects = state.kb.getElementsByTagName("rect");
 
    for (let i = 0; i < rects.length; i++) {
@@ -36,6 +45,13 @@ window.addEventListener("load", function() {
 
       key.addEventListener("mouseup", function() {
          stopPlaying(i, key);
+      });
+
+      key.addEventListener("mouseenter", function() {
+         console.log("fired!");
+         if (state.mouseDown) {
+            startPlaying(i, key);
+         }
       });
 
       key.addEventListener("mouseout", function() {
