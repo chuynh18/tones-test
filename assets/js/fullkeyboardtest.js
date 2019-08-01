@@ -48,7 +48,6 @@ window.addEventListener("load", function() {
       });
 
       key.addEventListener("mouseenter", function() {
-         console.log("fired!");
          if (state.mouseDown) {
             startPlaying(i, key);
          }
