@@ -94,6 +94,7 @@ function preload(url, index) {
    const req = new XMLHttpRequest;
    req.open("GET", url, true);
    req.responseType = 'arraybuffer';
+   req.overrideMimeType("audio/webm");
 
    const note = {
       buffer: null,
