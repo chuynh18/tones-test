@@ -92,9 +92,9 @@ function noteStop(note) {
 
 function preload(url, index) {
    const req = new XMLHttpRequest;
+   req.overrideMimeType("audio/webm");
    req.open("GET", url, true);
    req.responseType = 'arraybuffer';
-   req.overrideMimeType("audio/webm");
 
    const note = {
       buffer: null,
