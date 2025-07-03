@@ -36,8 +36,8 @@ window.addEventListener("load", function() {
    for (let i = 0; i < rects.length; i++) {
       const key = rects[i];
 
-      preload(`assets/audio/${Number(key.id)}.webm`, i);
-      console.log(`preloading assets/audio/${Number(key.id)}.webm`);
+      preload(`assets/audio/${Number(key.id)}.mp3`, i);
+      console.log(`preloading assets/audio/${Number(key.id)}.mp3`);
 
       key.addEventListener("mousedown", function() {
          startPlaying(i, key);
@@ -82,7 +82,7 @@ function stopPlaying(i, key) {
 function noteStop(note) {
    try {
       if (note.source && !state.pedal) {
-         note.gain.gain.exponentialRampToValueAtTime(0.00001, state.audioContext.currentTime + CONSTANTS.noteFade);
+         note.gain.gain.exponentialRampToValueAtTime(0.05, state.audioContext.currentTime + CONSTANTS.noteFade);
          note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
       }
    } catch (e) {
@@ -92,7 +92,6 @@ function noteStop(note) {
 
 function preload(url, index) {
    const req = new XMLHttpRequest;
-   req.overrideMimeType("audio/webm");
    req.open("GET", url, true);
    req.responseType = 'arraybuffer';
 
@@ -103,7 +102,8 @@ function preload(url, index) {
    };
 
    req.onload = function() {
-      state.audioContext.decodeAudioData(req.response,
+      state.audioContext.decodeAudioData(
+         req.response,
          function(buffer) {
             note.buffer = buffer;
 
@@ -111,7 +111,8 @@ function preload(url, index) {
          },
          function(err) {
             console.log(err);
-         });
+         }
+      );
     }
     req.send();
 }
