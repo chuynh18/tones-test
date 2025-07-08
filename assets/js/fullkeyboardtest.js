@@ -14,8 +14,14 @@ const state = {
    pedal: false
 };
 
+let rects
+
+const keyReference = {};
+
 window.addEventListener("load", function() {
    state.kb = document.getElementById("kb").getSVGDocument();
+   rects = state.kb.getElementsByTagName("rect");
+   console.log(rects);
 
    state.kb.addEventListener("click", function() {
       state.audioContext.resume().then(() => {
@@ -31,35 +37,34 @@ window.addEventListener("load", function() {
       state.mouseDown = false;
    });
 
-   const rects = state.kb.getElementsByTagName("rect");
-
    for (let i = 0; i < rects.length; i++) {
-      const key = rects[i];
+      preload(`assets/audio/${Number(rects[i].id)}.mp3`, i);
 
-      preload(`assets/audio/${Number(key.id)}.mp3`, i);
-      console.log(`preloading assets/audio/${Number(key.id)}.mp3`);
+      keyReference[rects[i].id] = i;
 
-      key.addEventListener("mousedown", function() {
-         startPlaying(i, key);
+      rects[i].addEventListener("mousedown", function() {
+         startPlaying(i, rects[i]);
       });
 
-      key.addEventListener("mouseup", function() {
-         stopPlaying(i, key);
+      rects[i].addEventListener("mouseup", function() {
+         stopPlaying(i, rects[i]);
       });
 
-      key.addEventListener("mouseenter", function() {
+      rects[i].addEventListener("mouseenter", function() {
          if (state.mouseDown) {
-            startPlaying(i, key);
+            startPlaying(i, rects[i]);
          }
       });
 
-      key.addEventListener("mouseout", function() {
-         stopPlaying(i, key);
+      rects[i].addEventListener("mouseout", function() {
+         stopPlaying(i, rects[i]);
       });
    }
 });
 
 function startPlaying(i, key) {
+   console.log(key);
+   console.log(i);
    key.style.fill = "red";
 
    const note = state.audio[i];
@@ -131,4 +136,41 @@ function togglePedal() {
       state.pedal = true;
       damperButton.textContent = "Damper pedal ON";
    }
+}
+
+function startPlayer() {
+   if (globalThis.midiFile) {
+      const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
+      const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
+
+      playableTracks.forEach(track => {
+         track.playableMusic.forEach(midiEvent => {
+            if (midiEvent.pianoNote) {
+               const startMillis = 1000 * midiEvent.startTime / ticksPerSecond;
+
+               setTimeout(function() {
+                  playNoteForDuration(
+                     midiEvent.pianoNote,
+                     1000 * midiEvent.duration / ticksPerSecond,
+                     midiEvent.velocity
+                  );
+               }, startMillis);
+            }
+         });
+      });
+
+   } else {
+      console.log("midi not loaded");
+   }
+}
+
+function getPlayableTracks(tracks) {
+   return tracks.map
+}
+
+function playNoteForDuration(pianoKeyNumber, duration, velocity) {
+   startPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]]);
+   setTimeout(function() {
+      stopPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]])
+   }, duration);
 }

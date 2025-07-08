@@ -1,0 +1,150 @@
+import { midiConstants } from "./midi-constants.js";
+
+export const trackMetadata = {
+    // 0x00: {type: "sequence number", handler: function() {console.log("TODO")}},
+    0x01: {type: "text", handler: parseText},
+    0x02: {type: "copyright", handler: parseText},
+    0x03: {type: "sequence/track name", handler: parseText},
+    0x04: {type: "instrument", handler: parseText},
+    0x05: {type: "lyric", handler: parseText},
+    0x06: {type: "marker", handler: parseText},
+    0x07: {type: "cue point", handler: parseText},
+    0x2f: {type: "end track", handler: null},
+    // 0x20: {type: "channel prefix", handler: function() {console.log("TODO")}},
+    0x51: {type: "set tempo", handler: parseTempo}, // microseconds per quarter note
+    // 0x54: {type: "smpte offset", handler: function() {console.log("TODO")}},
+    0x58: {type: "time signature", handler: parseTimeSignature},
+    0x59: {type: "key signature", handler: parseKeySignature},
+    // 0x7F: {type: "sequencer-specific metadata", handler: function() {console.log("TODO")}}
+};
+
+export const midiMessage = {
+    0b1000: {type: "note off event", dataBytes: 2},
+    0b1001: {type: "note on event", dataBytes: 2},
+    0b1010: {type: "polyphonic key pressure", dataBytes: 2},
+    0b1011: {type: "control change or channel mode message", dataBytes: 2},
+    0b1100: {type: "program change", dataBytes: 1},
+    0b1101: {type: "channel pressure", dataBytes: 1},
+    0b1110: {type: "pitch wheel change", dataBytes: 2},
+    0b1111: {type: "system message", dataBytes: 2} // not correct, but sufficient for now
+};
+
+/**
+ * True if MIDI file starts with valid "MThd" header, false otherwise.
+ * @param {DataView} dataView the DataView of an ArrayBuffer that contains the entire MIDI file
+*/
+export function isMidi(dataView) {
+    return midiConstants[parseBytes(dataView, 0, midiConstants.magicStringSize)] ? true : false;
+}
+
+// In retrospect, this function is trying to be too clever. Should instead create DataViews when needed.
+/**
+ * Returns an array of numbers representing the bytes of a slice of a DataView.
+ * @param {DataView} dataView the DataView of an ArrayBuffer that contains the entire MIDI file
+ * @param {number} startingByte starting byte number of the DataView
+ * @param {number} endingByte ending byte number
+*/
+export function parseDataViewSegment(dataView, startingByte, endingByte) {
+    const bytes = [];
+
+    for (let i = startingByte; i < endingByte; i++) {
+        bytes.push(dataView.getUint8(i));
+    }
+
+    return bytes;
+}
+
+/**
+ * Returns a string from a slice of a DataView. The slice is determined by startingByte and endingByte.
+ * @param {DataView} dataView the DataView of an ArrayBuffer that contains the entire MIDI file
+ * @param {number} startingByte starting byte number of the DataView
+ * @param {number} endingByte ending byte number
+*/
+export function parseBytes(dataView, startingByte, endingByte) {
+    return parseDataViewSegment(dataView, startingByte, endingByte)
+    .map(byte => String.fromCharCode(byte))
+    .join("");
+}
+
+/**
+ * @param {object} header header object returned by parseHeader()
+ * @param {object} tracks tracks object returned by findTracks()
+*/
+export function validateMidi(header, tracks) {
+    if (header.numTracks != tracks.length) {
+        console.log(`Track mismatch: MIDI header declared ${header.numTracks} tracks but found ${tracks.length} tracks.`);
+        return false;
+    };
+    if (header.format < 0 || header.format > 2) {
+        console.log(`Invalid header format. Got ${header.format} but must be 0, 1, or 2`);
+        return false;
+    }
+    return true;
+}
+
+// Division bit 15 is 1 if it's an SMTPE timing, 0 if it's ticks per quarter note
+// bits 14 through 8 can hold the values: -24, -25, -29, -30
+// the absolute value of those represents the framerate
+// bits 7 through 0: number of delta-time units per SMTPE frame
+/**
+ * @param {number} division 
+ * @returns {number} SMPTE timing converted to ticks per second
+ */
+export function handleSmtpe(division) {
+    const smtpe = {isSmtpe: false};
+
+    if ((division >> 15) & 1) {
+        smtpe.isSmtpe = true;
+
+        // high is originally a 7 bit integer and it is negative. how was it originally stored?
+        // do we have to mask bit 7 off?
+        // Or did bit 8 serve to make high negative AND signify an SMTPE timing? if so do we have to mask bit 8 off?
+        const high = (division >> 8) | 0b10000000_00000000_00000000_00000000;
+
+        const low = division & 0b00000000_11111111;
+
+        smtpe.division = Math.abs(high) * low;
+    }
+
+    return smtpe;
+}
+
+function parseText(array) {
+    return array.map(element => String.fromCharCode(element)).join("");
+}
+
+function parseTempo(array) {
+    const MICROSECONDS_PER_SECOND = 1_000_000;
+    const SECONDS_PER_MINUTE = 60;
+    
+    let result = 0;
+
+    for (let i = 0; i < array.length; i++) {
+        result |= array[i];
+
+        if (i < array.length - 1) {
+            result <<= 8;
+        }
+    }
+
+    return {
+        midiTempo: result,
+        musicTempo: MICROSECONDS_PER_SECOND / result * SECONDS_PER_MINUTE
+    };
+}
+
+function parseTimeSignature(array) {
+    return {
+        numerator: array[0],
+        denominator: Math.pow(2, array[1]),
+        clocksPerBeat: array[2],
+        notated32ndNotesPerQuarterNote: array[3]
+    };
+}
+
+function parseKeySignature(array) {
+    return {
+        key: array[0],
+        minorKey: array[1]
+    }
+}
