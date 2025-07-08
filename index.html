@@ -15,7 +15,9 @@
    </object>
    <button id="damper" onclick="togglePedal()">Damper pedal OFF</button>
    <input type="file" id="midi" name="midi" accept="audio/midi, audio/x-midi" />
-   <button id="playMidi" onclick="startPlayer()">Play MIDI</button>
+   <button id="playMidi" onclick="playMidi()">Play MIDI</button>
+   <input type="text" id="midiIndex" name="midiIndex" value="0" pattern="[0-9]*" autocomplete="off" />
+   <span id="midiTotalLength"></span>
    <script src="assets/js/fullkeyboardtest.js"></script>
    <script type="module" src="assets/js/main.js"></script>
 </body>

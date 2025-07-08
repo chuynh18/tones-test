@@ -11,7 +11,8 @@ const state = {
    audioContext: new AudioContext(),
    kb: undefined,
    audio: [],
-   pedal: false
+   pedal: false,
+   midiIndex: 0
 };
 
 let rects
@@ -135,25 +136,40 @@ function togglePedal() {
    }
 }
 
-function startPlayer() {
+function playMidi() {
+   state.midiIndex = Number(document.getElementById("midiIndex").value);
+   startPlayer(Number(state.midiIndex));
+}
+
+function startPlayer(startIndex = 0) {
+   console.log(startIndex);
    if (globalThis.midiFile) {
       const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
       const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
-
+      document.getElementById("midiTotalLength").innerHTML = `total length: ${playableTracks[0].playableMusic.length}`;
       playableTracks.forEach(track => {
-         track.playableMusic.forEach(midiEvent => {
-            if (midiEvent.pianoNote) {
-               const startMillis = 1000 * midiEvent.startTime / ticksPerSecond;
+         let offset = 0;
 
+         if (startIndex > 0) {
+            offset = 1000 * track.playableMusic[startIndex].startTime / ticksPerSecond;
+         }
+
+         for (let i = startIndex; i < track.playableMusic.length; i++) {
+            const midiEvent = track.playableMusic[i];
+            if (midiEvent.pianoNote) {
+               const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset;
+               console.log(startMillis);
                setTimeout(function() {
                   playNoteForDuration(
                      midiEvent.pianoNote,
                      1000 * midiEvent.duration / ticksPerSecond,
                      midiEvent.velocity
                   );
+                  state.midiIndex = i;
+                  document.getElementById("midiIndex").setAttribute("value", i);
                }, startMillis);
             }
-         });
+         }
       });
 
    } else {
