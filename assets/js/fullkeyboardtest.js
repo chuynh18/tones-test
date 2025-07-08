@@ -21,7 +21,6 @@ const keyReference = {};
 window.addEventListener("load", function() {
    state.kb = document.getElementById("kb").getSVGDocument();
    rects = state.kb.getElementsByTagName("rect");
-   console.log(rects);
 
    state.kb.addEventListener("click", function() {
       state.audioContext.resume().then(() => {
@@ -63,8 +62,6 @@ window.addEventListener("load", function() {
 });
 
 function startPlaying(i, key) {
-   console.log(key);
-   console.log(i);
    key.style.fill = "red";
 
    const note = state.audio[i];
@@ -160,7 +157,7 @@ function startPlayer() {
       });
 
    } else {
-      console.log("midi not loaded");
+      console.log("MIDI not loaded!");
    }
 }
 
