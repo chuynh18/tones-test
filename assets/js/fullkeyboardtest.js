@@ -15,7 +15,9 @@ const state = {
    midiIndex: 0
 };
 
-let rects
+const colors = ["Red", "Blue", "Green", "GoldenRod", "Orchid", "Aqua"];
+
+let rects;
 
 const keyReference = {};
 
@@ -62,8 +64,8 @@ window.addEventListener("load", function() {
    }
 });
 
-function startPlaying(i, key) {
-   key.style.fill = "red";
+function startPlaying(i, key, color = "red", gain = 1) {
+   key.style.fill = color;
 
    const note = state.audio[i];
    
@@ -72,6 +74,8 @@ function startPlaying(i, key) {
    note.gain = state.audioContext.createGain();
    note.source.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
+
+   note.gain.gain.value = gain;
 
    note.source.start(0);
 }
@@ -142,12 +146,11 @@ function playMidi() {
 }
 
 function startPlayer(startIndex = 0) {
-   console.log(startIndex);
    if (globalThis.midiFile) {
       const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
       const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
-      document.getElementById("midiTotalLength").innerHTML = `total length: ${playableTracks[0].playableMusic.length}`;
-      playableTracks.forEach(track => {
+      document.getElementById("midiTotalLength").innerHTML = `${playableTracks[0].playableMusic.length}`;
+      playableTracks.forEach((track, trackNum) => {
          let offset = 0;
 
          if (startIndex > 0) {
@@ -158,16 +161,17 @@ function startPlayer(startIndex = 0) {
             const midiEvent = track.playableMusic[i];
             if (midiEvent.pianoNote) {
                const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset;
-               console.log(startMillis);
-               setTimeout(function() {
+
+               (function(i){setTimeout(function() {
                   playNoteForDuration(
                      midiEvent.pianoNote,
                      1000 * midiEvent.duration / ticksPerSecond,
+                     colors[trackNum],
                      midiEvent.velocity
                   );
                   state.midiIndex = i;
-                  document.getElementById("midiIndex").setAttribute("value", i);
-               }, startMillis);
+                  document.getElementById("currentPosition").innerHTML = `Current note is ${state.midiIndex} out of `;
+               }, startMillis);})(i);
             }
          }
       });
@@ -181,8 +185,9 @@ function getPlayableTracks(tracks) {
    return tracks.map
 }
 
-function playNoteForDuration(pianoKeyNumber, duration, velocity) {
-   startPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]]);
+function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
+   const volume = velocity/127;
+   startPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]], color, volume);
    setTimeout(function() {
       stopPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]])
    }, duration);
