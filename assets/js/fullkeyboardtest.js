@@ -22,6 +22,7 @@ window.addEventListener("load", function() {
    for (let i = 0; i < state.rects.length; i++) {
       preload(`assets/audio/${Number(state.rects[i].id)}.mp3`, i);
 
+      // penance for my sin of being not smart when assigning IDs to the piano keys in the SVG
       keyReference[state.rects[i].id] = i;
 
       state.rects[i].addEventListener("mousedown", function() {
@@ -125,7 +126,6 @@ function togglePedal() {
 }
 
 function playMidi() {
-   console.log("play");
    state.midiIndex = Number(document.getElementById("midiIndex").value);
    startPlayer(Number(state.midiIndex));
 }
@@ -164,10 +164,6 @@ function startPlayer(startIndex = 0) {
    } else {
       console.log("MIDI not loaded!");
    }
-}
-
-function getPlayableTracks(tracks) {
-   return tracks.map
 }
 
 function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {

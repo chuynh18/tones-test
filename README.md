@@ -8,4 +8,4 @@ Piano sounds from https://theremin.music.uiowa.edu/MISpiano.html
 
 Piano SVG from... I forgot, but it only had 12 keys so I duplicated them in Inkscape to get all 88 keys
 
-You can see the very early [proof-of-concept here](https://chuynh18.github.io/tones-test/sine.html).
+You can see the very early [proof-of-concept of this piano here](https://chuynh18.github.io/tones-test/sine.html).
