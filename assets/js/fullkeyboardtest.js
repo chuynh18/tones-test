@@ -1,29 +1,8 @@
-"use strict";
-
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-
-const CONSTANTS = {
-   noteFade: 0.8
-}
-
-const state = {
-   mouseDown: false,
-   audioContext: new AudioContext(),
-   kb: undefined,
-   audio: [],
-   pedal: false,
-   midiIndex: 0
-};
-
-const colors = ["Red", "Blue", "Green", "GoldenRod", "Orchid", "Aqua"];
-
-let rects;
-
-const keyReference = {};
+import { CONSTANTS, state, colors, keyReference } from "./piano/resources.js"
 
 window.addEventListener("load", function() {
    state.kb = document.getElementById("kb").getSVGDocument();
-   rects = state.kb.getElementsByTagName("rect");
+   state.rects = state.kb.getElementsByTagName("rect");
 
    state.kb.addEventListener("click", function() {
       state.audioContext.resume().then(() => {
@@ -39,29 +18,34 @@ window.addEventListener("load", function() {
       state.mouseDown = false;
    });
 
-   for (let i = 0; i < rects.length; i++) {
-      preload(`assets/audio/${Number(rects[i].id)}.mp3`, i);
+   // attach event listeners to each key of the piano
+   for (let i = 0; i < state.rects.length; i++) {
+      preload(`assets/audio/${Number(state.rects[i].id)}.mp3`, i);
 
-      keyReference[rects[i].id] = i;
+      keyReference[state.rects[i].id] = i;
 
-      rects[i].addEventListener("mousedown", function() {
-         startPlaying(i, rects[i]);
+      state.rects[i].addEventListener("mousedown", function() {
+         startPlaying(i, state.rects[i]);
       });
 
-      rects[i].addEventListener("mouseup", function() {
-         stopPlaying(i, rects[i]);
+      state.rects[i].addEventListener("mouseup", function() {
+         stopPlaying(i, state.rects[i]);
       });
 
-      rects[i].addEventListener("mouseenter", function() {
+      state.rects[i].addEventListener("mouseenter", function() {
          if (state.mouseDown) {
-            startPlaying(i, rects[i]);
+            startPlaying(i, state.rects[i]);
          }
       });
 
-      rects[i].addEventListener("mouseout", function() {
-         stopPlaying(i, rects[i]);
+      state.rects[i].addEventListener("mouseout", function() {
+         stopPlaying(i, state.rects[i]);
       });
    }
+
+   document.getElementById("damper").addEventListener("click", togglePedal);
+
+   document.getElementById("playMidi").addEventListener("click", playMidi);
 });
 
 function startPlaying(i, key, color = "red", gain = 1) {
@@ -141,6 +125,7 @@ function togglePedal() {
 }
 
 function playMidi() {
+   console.log("play");
    state.midiIndex = Number(document.getElementById("midiIndex").value);
    startPlayer(Number(state.midiIndex));
 }
@@ -187,8 +172,8 @@ function getPlayableTracks(tracks) {
 
 function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
    const volume = velocity/127;
-   startPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]], color, volume);
+   startPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, volume);
    setTimeout(function() {
-      stopPlaying(keyReference[pianoKeyNumber], rects[keyReference[pianoKeyNumber]])
+      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]])
    }, duration);
 }
