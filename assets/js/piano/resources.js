@@ -11,7 +11,9 @@ export const state = {
    audio: [],
    pedal: false,
    midiIndex: 0,
-   rects: undefined
+   rects: undefined,
+   player: [],
+   volume: 1
 };
 
 // probably don't need 16 colors but just in case... cause I'm not guarding against bad access =)

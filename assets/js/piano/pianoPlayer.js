@@ -28,7 +28,7 @@ export function startPlayer(startIndex = 0) {
 
 function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
    if (midiEvent.pianoNote) {
-      (function(i){setTimeout(function() {
+      (function(i){state.player.push(setTimeout(function() {
          playNoteForDuration(
             midiEvent.pianoNote,
             1000 * midiEvent.duration / ticksPerSecond,
@@ -37,7 +37,7 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
          );
          state.midiIndex = i;
          document.getElementById("currentPosition").innerHTML = `Current note is ${state.midiIndex} out of `;
-      }, startMillis);})(i);
+      }, startMillis));})(i);
    }
 }
 
@@ -53,6 +53,8 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    key.style.fill = color;
 
    const note = state.audio[i];
+   state.audio[i].currentTime = state.audioContext.currentTime;
+   console.log("startPlaying", state.audio[i].currentTime);
    
    note.source = state.audioContext.createBufferSource();
    note.source.buffer = note.buffer;
@@ -60,7 +62,7 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    note.source.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
 
-   note.gain.gain.value = gain;
+   note.gain.gain.value = gain * state.volume;
 
    note.source.start(0);
 }
@@ -74,10 +76,36 @@ export function stopPlaying(i, key) {
 function noteStop(note) {
    try {
       if (note.source && !state.pedal) {
-         note.gain.gain.exponentialRampToValueAtTime(0.05, state.audioContext.currentTime + CONSTANTS.noteFade);
-         note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
+      console.log("currentTime", state.audioContext.currentTime);
+      note.gain.gain.exponentialRampToValueAtTime(0.05, state.audioContext.currentTime + CONSTANTS.noteFade);
+      note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
       }
    } catch (e) {
       console.log(e);
    }
+}
+
+export function setPedal(pedalState) {
+   const damperButton = document.getElementById("damper");
+   state.pedal = pedalState;
+
+   if (pedalState) {
+      damperButton.textContent = "Damper pedal ON";
+   } else {
+      damperButton.textContent = "Damper pedal OFF";
+
+      for (let i = 0; i < state.audio.length; i++) {
+         noteStop(state.audio[i]);
+      }   
+   }
+}
+
+export function pausePlaying() {
+   state.player.forEach(queuedNote => clearTimeout(queuedNote));
+   document.getElementById("midiIndex").setAttribute("value", state.midiIndex);
+}
+
+export function stopMidiPlaying() {
+   state.midiIndex = 0;
+   pausePlaying();
 }

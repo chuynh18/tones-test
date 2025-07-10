@@ -1,5 +1,5 @@
 import { state, keyReference } from "./piano/resources.js"
-import { startPlayer, startPlaying, stopPlaying } from "./piano/midiPlayer.js";
+import { startPlayer, startPlaying, stopPlaying, setPedal, pausePlaying, stopMidiPlaying } from "./piano/pianoPlayer.js";
 
 window.addEventListener("load", function() {
    state.kb = document.getElementById("kb").getSVGDocument();
@@ -46,8 +46,10 @@ window.addEventListener("load", function() {
    }
 
    document.getElementById("damper").addEventListener("click", togglePedal);
-
    document.getElementById("playMidi").addEventListener("click", playMidi);
+   document.getElementById("pauseMidi").addEventListener("click", pausePlaying);
+   document.getElementById("stopMidi").addEventListener("click", stopMidiPlaying);
+   this.document.getElementById("volume").addEventListener("click", setVolume);
 });
 
 function preload(url, index) {
@@ -78,22 +80,14 @@ function preload(url, index) {
 }
 
 function togglePedal() {
-   const damperButton = document.getElementById("damper");
-
-   if (state.pedal) {
-      state.pedal = false;
-      damperButton.textContent = "Damper pedal OFF";
-
-      for (let i = 0; i < state.audio.length; i++) {
-         noteStop(state.audio[i]);
-      }      
-   } else {
-      state.pedal = true;
-      damperButton.textContent = "Damper pedal ON";
-   }
+   state.pedal ? setPedal(false) : setPedal(true);
 }
 
 function playMidi() {
    state.midiIndex = Number(document.getElementById("midiIndex").value);
    startPlayer(Number(state.midiIndex));
+}
+
+function setVolume() {
+   state.volume = Number(document.getElementById("volume").value)/50;
 }
