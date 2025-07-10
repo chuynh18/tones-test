@@ -18,6 +18,7 @@ export const trackMetadata = {
     // 0x7F: {type: "sequencer-specific metadata", handler: function() {console.log("TODO")}}
 };
 
+// the 4 most significant bits
 export const midiMessage = {
     0b1000: {type: "note off event", dataBytes: 2},
     0b1001: {type: "note on event", dataBytes: 2},
@@ -27,6 +28,33 @@ export const midiMessage = {
     0b1101: {type: "channel pressure", dataBytes: 1},
     0b1110: {type: "pitch wheel change", dataBytes: 2},
     0b1111: {type: "system message", dataBytes: 2} // not correct, but sufficient for now
+};
+
+// the 4 least significant bits in a control change message (that is, the 4 most significant bits are 0b1011)
+export const controlChangeMessages = {
+    0: {type: "bank select"},
+    1: {type: "modulation wheel"},
+    7: {type: "channel volume"},
+    10: {type: "pan"},
+    11: {type: "expression controller"},
+    64: {type: "damper pedal toggle"},
+    65: {type: "portamento toggle"},
+    66: {type: "sostenuto toggle"},
+    67: {type: "una corda toggle"},
+    68: {type: "legato footswitch toggle"},
+    121: {type: "reset all controllers"},
+    122: {type: "local control change"},
+    123: {type: "all notes off"},
+    124: {type: "omni mode off"}, // causes all notes off
+    125: {type: "omni mode on"}, // causes all notes off
+    126: {type: "mono mode on"}, // causes all notes off, no polyphony
+    127: {type: "poly mode on"} // causes all notes off
+};
+
+// the 4 least significant bits in a system message (that is, the 4 most significant bits are 0b1111)
+export const systemMessages = {
+    0b0010: {type: "song position pointer", dataBytes: 2},
+    0b0011: {type: "song select", dataBytes: 1}
 };
 
 /**
@@ -82,31 +110,31 @@ export function validateMidi(header, tracks) {
     return true;
 }
 
-// Division bit 15 is 1 if it's an SMTPE timing, 0 if it's ticks per quarter note
+// Division bit 15 is 1 if it's an SMPTE timing, 0 if it's ticks per quarter note
 // bits 14 through 8 can hold the values: -24, -25, -29, -30
 // the absolute value of those represents the framerate
-// bits 7 through 0: number of delta-time units per SMTPE frame
+// bits 7 through 0: number of delta-time units per SMPTE frame
 /**
  * @param {number} division 
  * @returns {number} SMPTE timing converted to ticks per second
  */
-export function handleSmtpe(division) {
-    const smtpe = {isSmtpe: false};
+export function handleSmpte(division) {
+    const smpte = {isSmpte: false};
 
     if ((division >> 15) & 1) {
-        smtpe.isSmtpe = true;
+        smpte.isSmpte = true;
 
         // high is originally a 7 bit integer and it is negative. how was it originally stored?
         // do we have to mask bit 7 off?
-        // Or did bit 8 serve to make high negative AND signify an SMTPE timing? if so do we have to mask bit 8 off?
+        // Or did bit 8 serve to make high negative AND signify an SMPTE timing? if so do we have to mask bit 8 off?
         const high = (division >> 8) | 0b10000000_00000000_00000000_00000000;
 
         const low = division & 0b00000000_11111111;
 
-        smtpe.division = Math.abs(high) * low;
+        smpte.division = Math.abs(high) * low;
     }
 
-    return smtpe;
+    return smpte;
 }
 
 function parseText(array) {

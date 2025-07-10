@@ -4,7 +4,7 @@ import { isMidi,
     parseBytes,
     parseDataViewSegment,
     validateMidi,
-    handleSmtpe } from "./midi-utility-functions.js";
+    handleSmpte } from "./midi-utility-functions.js";
 
 /**
  * @param {HTMLInputElement} fileSelector
@@ -58,11 +58,11 @@ export function parseHeader(dataView) {
     // MIDI format data is always at offset 8, track count at offset 10, and division at offset 12
     // yes, division is apparently the name of the unit. it specifies how to interpret the timing of the midi file
     let division = dataView.getUint16(12);
-    const smtpe = handleSmtpe(division);
+    const smpte = handleSmpte(division);
 
-    if (smtpe.isSmtpe) {
-        console.log("Division high bit set, now handling SMTPE values. This is untested code.");
-        division = smtpe.division;
+    if (smpte.isSmpte) {
+        console.log("Division high bit set, now handling SMPTE values. This is untested code.");
+        division = smpte.division;
     }
     
     return {
@@ -70,7 +70,7 @@ export function parseHeader(dataView) {
         format: dataView.getUint16(8),
         numTracks: dataView.getUint16(10),
         division: division,
-        isSmtpe: smtpe.isSmtpe // true means division is ticks per second, false means ticks per quarter note!
+        isSmpte: smpte.isSmpte // true means division is ticks per second, false means ticks per quarter note!
     };
 }
 

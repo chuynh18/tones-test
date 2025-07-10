@@ -1,5 +1,5 @@
 import { midiConstants } from "./midi-constants.js";
-import { trackMetadata, midiMessage } from "./midi-utility-functions.js";
+import { trackMetadata, midiMessage, controlChangeMessages } from "./midi-utility-functions.js";
 import parseVariableLengthValue from "./parse-quantity.js";
 
 /**
@@ -20,8 +20,7 @@ export function parseTrack(track) {
             const messageLength = track[i+2];
 
             if (trackMetadata[metaEvent]) {
-                
-                // intentional null handler for midi track end event
+                // I intentionally set a null handler for MIDI end of track event. break out of the loop
                 if (! trackMetadata[metaEvent].handler) break;
 
                 parsedTrack[metaEvent] = {
@@ -33,19 +32,23 @@ export function parseTrack(track) {
 
                 i += messageLength;
             } else {
+                // if we don't recognize the metadata type, just insert the raw bytes
+                // the key is the first byte which should correspond to the MIDI metadata type
+                // the value is the rest of the array which should be the metadata (but undecoded, of course)
                 parsedTrack[tempArray[0]] = Array.from(tempArray.slice(1)); // TODO: probably dead or at least invalid code
             }
 
         tempArray.length = 0;
 
-        } else if (track[i] < 128 && track[i+1] != 0xFF) { // encountered delta-time stamp, process it and then handle the following midi event
+        // encountered end of delta-time stamp, process variable-length value (VLV) and then handle the following midi event
+        } else if (track[i] < 128 && track[i+1] != 0xFF) {
             const timeArray = tempArray.concat(track[i]);
             tempArray.length = 0;
             const time = parseVariableLengthValue(timeArray);
             const dataIndexStart = i + 1;
             const potentialMidiMessage = track[dataIndexStart] >> 4;
             
-            // check next byte for midi event
+            // the next byte after the delta-time VLV is a MIDI event
             if (midiMessage[potentialMidiMessage]) {
                 const dataIndexEnd = dataIndexStart + midiMessage[potentialMidiMessage].dataBytes + 1;
                 runningStatus = midiMessage[potentialMidiMessage];
@@ -55,9 +58,10 @@ export function parseTrack(track) {
                 );
 
                 i += midiMessage[potentialMidiMessage].dataBytes + 1;
+            
+            // For consecutive events of the same type, MIDI might not explicitly include the event byte
+            // we need to keep track of the last event and reuse it
             } else if (runningStatus && i < track.length - 1) {
-                // For consecutive events of the same type, MIDI might not explicitly include the event byte
-                // we need to keep track of the last event and reuse it
                 const dataIndexEnd = dataIndexStart + runningStatus.dataBytes + 1;
 
                 parsedTrack.music.push(
@@ -67,7 +71,9 @@ export function parseTrack(track) {
                 i+= runningStatus.dataBytes;
             }
             
-        } else { // don't yet know what this data is, temporarily store it as we might find out what it is later
+        // we haven't gotten enough bytes to identify the MIDI data yet
+        // temporarily store because we likely just need to decode a few more bytes
+        } else { 
             tempArray.push(track[i]);
         }
     }
@@ -77,7 +83,6 @@ export function parseTrack(track) {
 
 function createMessage(track, messageType, time, dataIndexStart, dataIndexEnd) {
     const data = track.slice(dataIndexStart + 1, dataIndexEnd);
-    const note = resolveNote(data);
 
     const midiEvent = {
         time: time,
@@ -85,21 +90,38 @@ function createMessage(track, messageType, time, dataIndexStart, dataIndexEnd) {
         index: dataIndexStart
     };
 
-    if (messageType === midiMessage[0b1000].type || messageType === midiMessage[0b1001].type) {
-        midiEvent.midiNote = note.midiNote;
-        midiEvent.pianoNote = note.pianoNote;
-        midiEvent.velocity = note.velocity;
-    } else {
-        midiEvent.data = data;
+    switch(messageType) {
+        case midiMessage[0b1000].type:
+        case midiMessage[0b1001].type:
+            const note = resolveNote(data);
+            midiEvent.midiNote = note.midiNote;
+            midiEvent.pianoNote = note.pianoNote;
+            midiEvent.velocity = note.velocity;
+            break;
+        case midiMessage[0b1011].type:
+            const controlChange = handleControlChangeMessage(data);
+            midiEvent.controlChangeType = controlChange.controlChangeType;
+            midiEvent.controlChangeValue = controlChange.value;
+            break;
+        default:
+            midiEvent.data = data;
+
     }
 
     return midiEvent;
 }
 
+function handleControlChangeMessage(data) {
+    return {
+        controlChangeType: controlChangeMessages[data[0]].type,
+        value: data[1]
+    };
+}
+
 function resolveNote(data) {
     return {
         midiNote: data[0],
-        pianoNote: data[0] - 20,
+        pianoNote: data[0] - 20, // the piano key number is simply 20 lower than the midi note number
         velocity: data[1]
     };
 }

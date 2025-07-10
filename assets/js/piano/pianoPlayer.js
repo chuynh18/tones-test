@@ -100,6 +100,7 @@ export function setPedal(pedalState) {
 
 export function pausePlaying() {
    state.player.forEach(queuedNote => clearTimeout(queuedNote));
+   state.player.length = 0;
    document.getElementById("midiIndex").setAttribute("value", state.midiIndex);
 }
 

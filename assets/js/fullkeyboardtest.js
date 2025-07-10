@@ -49,7 +49,7 @@ window.addEventListener("load", function() {
    document.getElementById("playMidi").addEventListener("click", playMidi);
    document.getElementById("pauseMidi").addEventListener("click", pausePlaying);
    document.getElementById("stopMidi").addEventListener("click", stopMidiPlaying);
-   this.document.getElementById("volume").addEventListener("click", setVolume);
+   document.getElementById("volume").addEventListener("pointerup", setVolume);
 });
 
 function preload(url, index) {
