@@ -126,7 +126,6 @@ function resolveNote(data) {
     };
 }
 
-// naively written with the assumption that every note being played will be commanded to cease being played
 export function postprocess(parsedTrack) {
     const currentlyPlaying = {};
     const postprocessed = [];
@@ -136,11 +135,13 @@ export function postprocess(parsedTrack) {
         const currentCommand = parsedTrack[i];
         runningTime += currentCommand.time;
 
+        // a note is being stopped
         if ((currentCommand.type === midiMessage[0b1001].type &&
             currentCommand.velocity === 0) ||
             currentCommand.type === midiMessage[0b1000].type
         ) {
-            // a note is being stopped
+            if (! currentlyPlaying[currentCommand.midiNote]) continue; // discard spurious note off events
+
             const postProcessedNote = {
                 midiNote: currentCommand.midiNote,
                 pianoNote: currentCommand.pianoNote,
@@ -157,7 +158,7 @@ export function postprocess(parsedTrack) {
             currentCommand.startTime = runningTime;
             currentlyPlaying[currentCommand.midiNote] = currentCommand;
         } else {
-            // this is naive, we'll eventually handle the damper pedal here
+            // just pass the command on as-is
             currentCommand.startTime = runningTime;
             postprocessed.push(currentCommand);
         }
