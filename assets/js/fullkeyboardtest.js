@@ -84,6 +84,7 @@ function togglePedal() {
 }
 
 function playMidi() {
+   if (state.player.length > 0) return; // NO CHAOS (prevent kicking off playback multiple times)
    state.midiIndex = Number(document.getElementById("midiIndex").value);
    startPlayer(Number(state.midiIndex));
 }
