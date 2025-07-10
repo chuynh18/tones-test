@@ -15,9 +15,7 @@ export function startPlayer(startIndex = 0) {
          for (let i = startIndex; i < track.playableMusic.length; i++) {
             const midiEvent = track.playableMusic[i];
             const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset;
-
             processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i);
-
          }
       });
 
@@ -38,6 +36,8 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
          state.midiIndex = i;
          document.getElementById("currentPosition").innerHTML = `Current note is ${state.midiIndex} out of `;
       }, startMillis));})(i);
+   } else if (midiEvent.type === "control change or channel mode message") {
+      handleControlChangeEvent(midiEvent, startMillis, i);
    }
 }
 
@@ -107,4 +107,19 @@ export function pausePlaying() {
 export function stopMidiPlaying() {
    state.midiIndex = 0;
    pausePlaying();
+}
+
+function handleControlChangeEvent(event, startMillis, i) {
+   switch(event.controlChangeType) {
+      case "damper pedal toggle":
+
+         (function(i){state.player.push(setTimeout(function() {
+            (event.controlChangeValue > 63) ? setPedal(true) : setPedal(false); 
+            state.midiIndex = i;
+            document.getElementById("currentPosition").innerHTML = `Current note is ${state.midiIndex} out of `;
+         }, startMillis));})(i);
+         break;
+      
+      default:
+   }
 }

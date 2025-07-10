@@ -8,12 +8,12 @@ export const state = {
    mouseDown: false,
    audioContext: new AudioContext(),
    kb: undefined,
-   audio: [],
-   pedal: false,
-   midiIndex: 0,
+   audio: [], // holds all decoded audio resources
+   pedal: false, // damper pedal state
+   midiIndex: 0, // the index of the last midi event processed
    rects: undefined,
-   player: [],
-   volume: 1
+   player: [], // holds all setTimeouts so that we can destroy them all on pause/stop
+   volume: 1 // volume multiplier
 };
 
 // probably don't need 16 colors but just in case... cause I'm not guarding against bad access =)
