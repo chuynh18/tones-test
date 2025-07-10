@@ -54,7 +54,6 @@ export function startPlaying(i, key, color = "red", gain = 1) {
 
    const note = state.audio[i];
    state.audio[i].currentTime = state.audioContext.currentTime;
-   console.log("startPlaying", state.audio[i].currentTime);
    
    note.source = state.audioContext.createBufferSource();
    note.source.buffer = note.buffer;
@@ -76,7 +75,6 @@ export function stopPlaying(i, key) {
 function noteStop(note) {
    try {
       if (note.source && !state.pedal) {
-      console.log("currentTime", state.audioContext.currentTime);
       note.gain.gain.exponentialRampToValueAtTime(0.05, state.audioContext.currentTime + CONSTANTS.noteFade);
       note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
       }

@@ -11,11 +11,11 @@ window.addEventListener("load", function() {
       });
    }, {once: true});
 
-   state.kb.addEventListener("mousedown", function() {
+   state.kb.addEventListener("pointerdown", function() {
       state.mouseDown = true;
    });
 
-   state.kb.addEventListener("mouseup", function() {
+   state.kb.addEventListener("pointerup", function() {
       state.mouseDown = false;
    });
 
@@ -26,21 +26,21 @@ window.addEventListener("load", function() {
       // penance for my sin of being not smart when assigning IDs to the piano keys in the SVG
       keyReference[state.rects[i].id] = i;
 
-      state.rects[i].addEventListener("mousedown", function() {
+      state.rects[i].addEventListener("pointerdown", function() {
          startPlaying(i, state.rects[i]);
       });
 
-      state.rects[i].addEventListener("mouseup", function() {
+      state.rects[i].addEventListener("pointerup", function() {
          stopPlaying(i, state.rects[i]);
       });
 
-      state.rects[i].addEventListener("mouseenter", function() {
+      state.rects[i].addEventListener("pointerenter", function() {
          if (state.mouseDown) {
             startPlaying(i, state.rects[i]);
          }
       });
 
-      state.rects[i].addEventListener("mouseout", function() {
+      state.rects[i].addEventListener("pointerleave", function() {
          stopPlaying(i, state.rects[i]);
       });
    }
