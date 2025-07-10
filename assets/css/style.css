@@ -1,0 +1,11 @@
+.controls {
+    margin: 1vh 0;
+}
+
+#controlsTable {
+    width: 100%;
+}
+
+#volumeControl {
+    float: right;
+}
