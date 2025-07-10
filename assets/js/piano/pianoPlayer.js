@@ -4,7 +4,7 @@ export function startPlayer(startIndex = 0) {
    if (globalThis.midiFile) {
       const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
       const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
-      document.getElementById("midiTotalLength").innerHTML = `${playableTracks[0].playableMusic.length}`;
+      document.getElementById("midiTotalLength").innerHTML = `${playableTracks[0].playableMusic.length - 1}`;
       playableTracks.forEach((track, trackNum) => {
          let offset = 0;
 
