@@ -13,7 +13,8 @@ export const state = {
    midiIndex: 0, // the index of the last midi event processed
    rects: undefined,
    player: [], // holds all setTimeouts so that we can destroy them all on pause/stop
-   volume: 1 // volume multiplier
+   volume: 1, // volume multiplier
+   longestTrackIndex: 0
 };
 
 // probably don't need 16 colors but just in case... cause I'm not guarding against bad access =)

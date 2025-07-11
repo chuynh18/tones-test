@@ -8,30 +8,35 @@ export function startPlayer(startIndex = 0) {
       
       let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
-      
-      playableTracks.forEach(track => {
+
+      playableTracks.forEach((track, trackNum) => {
          if (earliestStartTime > track.startTime) earliestStartTime = track.startTime;
-         if (latestEndTime < track.endTime) latestEndTime = track.endTime;
+         if (latestEndTime < track.endTime) {
+            latestEndTime = track.endTime;
+            state.longestTrackIndex = trackNum;
+         }
       });
       
+      // sync object for seeking across multi-track MIDI files
+      const sync = syncSeekAcrossTracks(playableTracks, state.longestTrackIndex, startIndex);
+
       playableTracks.forEach((track, trackNum) => {
          let offset = earliestStartTime; // chop out silence at start of playback
          // convert ticks to milliseconds with 1 second grace period
          latestEndTime = (1000 * latestEndTime / ticksPerSecond) - offset;
 
          if (startIndex > 0) {
-            offset = 1000 * track.playableMusic[startIndex].startTime / ticksPerSecond;
+            offset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond;
             latestEndTime -= offset;
          }
 
-         for (let i = startIndex; i < track.playableMusic.length; i++) {
+         for (let i = sync[trackNum].startIndex; i < track.playableMusic.length; i++) {
             const midiEvent = track.playableMusic[i];
-            const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset;
+            const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset + sync[trackNum].offset;
             processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i);
          }
       });
 
-      console.log(latestEndTime);
       // reset player state when we reach end of the MIDI file
       state.player.push(setTimeout(function() {
          stopMidiPlaying();
@@ -51,7 +56,7 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
             colors[trackNum],
             midiEvent.velocity
          );
-         state.midiIndex = i;
+         if (i > state.midiIndex) state.midiIndex = i;
          updateSeekBarUI();
       }, startMillis));})(i);
    } else if (midiEvent.type === "control change or channel mode message") {
@@ -146,7 +151,7 @@ function updateSeekBarUI(playableTracks) {
    const seekBar = document.getElementById("seekBar");
 
    if (playableTracks) {
-      seekBar.setAttribute("max", playableTracks[0].playableMusic.length - 1);
+      seekBar.setAttribute("max", playableTracks[state.longestTrackIndex].playableMusic.length - 1);
    }
 
    seekBar.value = state.midiIndex;
@@ -156,4 +161,37 @@ export function userMovesSeekBar() {
    const seekBar = document.getElementById("seekBar");
    pausePlaying(false);
    startPlayer(Number(seekBar.value));
+}
+
+// helper function for keeping multi track MIDI files in sync when seeking
+function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLongestTrack) {
+   const seek = [];
+   const startTimeOfLongestTrack = playableTracks[longestTrackIndex].playableMusic[startIndexOfLongestTrack].startTime;
+
+   seek[longestTrackIndex] = {
+      startIndex: startIndexOfLongestTrack,
+      offset: 0,
+      startTime: startTimeOfLongestTrack
+   };
+
+   for (let i = 0; i < playableTracks.length; i++) {
+      if (i === longestTrackIndex) continue;
+
+      seek[i] = searchForCorrespondingStartIndex(playableTracks[i], startTimeOfLongestTrack);
+   }
+
+   return seek;
+}
+
+// todo: replace with binary search
+function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack) {
+   for (let i = 0; i < track.playableMusic.length; i++) {
+      if (track.playableMusic[i].startTime > startTimeOfLongestTrack) {
+         return {
+            startIndex: i - 1,
+            offset: startTimeOfLongestTrack - track.playableMusic[i - 1].startTime,
+            startTime: track.playableMusic[i - 1].startTime
+         };
+      }
+   }
 }
