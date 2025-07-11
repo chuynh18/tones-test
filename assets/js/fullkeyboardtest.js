@@ -1,5 +1,6 @@
 import { state, keyReference } from "./piano/resources.js"
 import { startPlayer, startPlaying, stopPlaying, setPedal, pausePlaying, stopMidiPlaying } from "./piano/pianoPlayer.js";
+import getMidi from "./midi/midi-serializer.js";
 
 window.addEventListener("load", function() {
    state.kb = document.getElementById("kb").getSVGDocument();
@@ -50,6 +51,17 @@ window.addEventListener("load", function() {
    document.getElementById("pauseMidi").addEventListener("click", pausePlaying);
    document.getElementById("stopMidi").addEventListener("click", stopMidiPlaying);
    document.getElementById("volume").addEventListener("pointerup", setVolume);
+
+   const fileInput = document.getElementById("midi");
+   
+   fileInput.addEventListener("change", () => {
+       getMidi(fileInput)
+           .then(result => {
+               console.log(result);
+               globalThis.midiFile = result; // if you want to make it available in the global scope
+           })
+           .catch(error => console.log(error));
+   });
 });
 
 function preload(url, index) {

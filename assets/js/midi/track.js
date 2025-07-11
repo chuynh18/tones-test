@@ -158,11 +158,17 @@ export function postprocess(parsedTrack) {
             currentCommand.startTime = runningTime;
             currentlyPlaying[currentCommand.midiNote] = currentCommand;
         } else {
-            // just pass the command on as-is
+            // just pass the command on as-is if it's not a note on or note off event
             currentCommand.startTime = runningTime;
             postprocessed.push(currentCommand);
         }
     }
 
-    return postprocessed.sort((a,b) => a.startTime - b.startTime);
+    const lastNote = postprocessed[postprocessed.length-1];
+
+    return {
+        music: postprocessed.sort((a,b) => a.startTime - b.startTime),
+        startTime: postprocessed[0].startTime,
+        endTime: lastNote.startTime + lastNote.time
+    };
 }

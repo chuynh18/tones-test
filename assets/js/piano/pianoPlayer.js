@@ -5,8 +5,17 @@ export function startPlayer(startIndex = 0) {
       const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
       const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
       document.getElementById("midiTotalLength").innerHTML = `${playableTracks[0].playableMusic.length - 1}`;
+      
+      let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
+      let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
+      
+      playableTracks.forEach(track => {
+         if (earliestStartTime > track.startTime) earliestStartTime = track.startTime;
+         if (latestEndTime < track.endTime) latestEndTime = track.endTime;
+      });
+      
       playableTracks.forEach((track, trackNum) => {
-         let offset = 0;
+         let offset = earliestStartTime; // chop out silence at start of playback
 
          if (startIndex > 0) {
             offset = 1000 * track.playableMusic[startIndex].startTime / ticksPerSecond;
@@ -15,9 +24,15 @@ export function startPlayer(startIndex = 0) {
          for (let i = startIndex; i < track.playableMusic.length; i++) {
             const midiEvent = track.playableMusic[i];
             const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset;
+            console.log(startMillis);
             processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i);
          }
       });
+
+      // reset player state when we reach end of the MIDI file
+      state.player.push(setTimeout(function() {
+         state.player.length = 0;
+      }, latestEndTime));
 
    } else {
       console.log("MIDI not loaded!");

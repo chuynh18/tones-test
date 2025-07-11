@@ -107,7 +107,10 @@ function parseTracks(dataView, header) {
 
     tracks.forEach(track => {
         if (track.track.music.length > 0) {
-            track.playableMusic = postprocess(track.track.music);
+            const postprocessed = postprocess(track.track.music);
+            track.playableMusic = postprocessed.music;
+            track.startTime = postprocessed.startTime;
+            track.endTime = postprocessed.endTime;
         }
     });
     
