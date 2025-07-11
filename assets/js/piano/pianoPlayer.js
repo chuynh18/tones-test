@@ -22,21 +22,21 @@ export function startPlayer(startIndex = 0) {
       // sync object for seeking across multi-track MIDI files
       const sync = syncSeekAcrossTracks(playableTracks, state.longestTrackIndex, startIndex);
 
-      console.log(sync);
-      console.log(state);
       playableTracks.forEach((track, trackNum) => {
-         let offset = earliestStartTime; // chop out silence at start of playback
+         let seekOffset = earliestStartTime; // chop out silence at start of playback
          // convert ticks to milliseconds with 1 second grace period
-         latestEndTime = (1000 * latestEndTime / ticksPerSecond) - offset;
+         latestEndTime = (1000 * latestEndTime / ticksPerSecond) - seekOffset;
 
          if (startIndex > 0) {
-            offset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond;
-            if (trackNum === state.longestTrackIndex) latestEndTime -= offset;
+            seekOffset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond; // convert to millis
+            if (trackNum === state.longestTrackIndex) latestEndTime -= seekOffset;
          }
 
          for (let i = sync[trackNum].startIndex; i < track.playableMusic.length; i++) {
             const midiEvent = track.playableMusic[i];
-            const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset + sync[trackNum].offset;
+            const baseStartTime = 1000 * midiEvent.startTime / ticksPerSecond;
+            const trackOffset = 1000 * sync[trackNum].offset / ticksPerSecond;
+            const startMillis = baseStartTime - seekOffset - trackOffset; // realign tracks that are offset in time from each other
             processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i);
          }
       });
@@ -168,6 +168,9 @@ export function userMovesSeekBar() {
 }
 
 // helper function for keeping multi track MIDI files in sync when seeking
+// we seek based on the index of the longest track (the track with the most notes)
+// but sometimes the other tracks will not have notes that are played at the same moment in time
+// so we will have to realign them by adding a time offset to the other tracks
 function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLongestTrack) {
    const seek = [];
    const startTimeOfLongestTrack = playableTracks[longestTrackIndex].playableMusic[startIndexOfLongestTrack].startTime;
