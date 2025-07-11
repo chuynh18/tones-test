@@ -8,7 +8,7 @@ export function startPlayer(startIndex = 0) {
       
       let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
-      let longestTrackLength = 0;
+      let longestTrackLength = 0; // store length of current longest track for comparison purposes
 
       playableTracks.forEach((track, trackNum) => {
          if (earliestStartTime > track.startTime) earliestStartTime = track.startTime;
@@ -19,14 +19,11 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
-      // console.log(state);
-      // console.log(playableTracks);
-      
       // sync object for seeking across multi-track MIDI files
       const sync = syncSeekAcrossTracks(playableTracks, state.longestTrackIndex, startIndex);
-      console.log("startIndex (should be longest track)", startIndex);
-      console.log("sync object", sync);
 
+      console.log(sync);
+      console.log(state);
       playableTracks.forEach((track, trackNum) => {
          let offset = earliestStartTime; // chop out silence at start of playback
          // convert ticks to milliseconds with 1 second grace period
@@ -44,7 +41,6 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
-      console.log("latest end time:", latestEndTime);
       // reset player state when we reach end of the MIDI file
       state.player.push(setTimeout(function() {
          stopMidiPlaying();
@@ -135,9 +131,9 @@ export function pausePlaying(updateUI = true) {
    if (updateUI) updateSeekBarUI();
 }
 
-export function stopMidiPlaying() {
+export function stopMidiPlaying(updateUI = true) {
    state.midiIndex = 0;
-   pausePlaying();
+   pausePlaying(updateUI);
 }
 
 function handleControlChangeEvent(event, startMillis, i) {
@@ -167,7 +163,7 @@ function updateSeekBarUI(playableTracks) {
 
 export function userMovesSeekBar() {
    const seekBar = document.getElementById("seekBar");
-   pausePlaying(false);
+   stopMidiPlaying(false);
    startPlayer(Number(seekBar.value));
 }
 
