@@ -8,17 +8,24 @@ export function startPlayer(startIndex = 0) {
       
       let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
+      let longestTrackLength = 0;
 
       playableTracks.forEach((track, trackNum) => {
          if (earliestStartTime > track.startTime) earliestStartTime = track.startTime;
-         if (latestEndTime < track.endTime) {
-            latestEndTime = track.endTime;
+         if (longestTrackLength < track.playableMusic.length) {
+            longestTrackLength = track.playableMusic.length;
+            latestEndTime = track.endTime
             state.longestTrackIndex = trackNum;
          }
       });
+
+      // console.log(state);
+      // console.log(playableTracks);
       
       // sync object for seeking across multi-track MIDI files
       const sync = syncSeekAcrossTracks(playableTracks, state.longestTrackIndex, startIndex);
+      console.log("startIndex (should be longest track)", startIndex);
+      console.log("sync object", sync);
 
       playableTracks.forEach((track, trackNum) => {
          let offset = earliestStartTime; // chop out silence at start of playback
@@ -27,7 +34,7 @@ export function startPlayer(startIndex = 0) {
 
          if (startIndex > 0) {
             offset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond;
-            latestEndTime -= offset;
+            if (trackNum === state.longestTrackIndex) latestEndTime -= offset;
          }
 
          for (let i = sync[trackNum].startIndex; i < track.playableMusic.length; i++) {
@@ -37,6 +44,7 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
+      console.log("latest end time:", latestEndTime);
       // reset player state when we reach end of the MIDI file
       state.player.push(setTimeout(function() {
          stopMidiPlaying();
