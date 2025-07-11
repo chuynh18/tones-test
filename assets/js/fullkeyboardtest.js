@@ -1,6 +1,14 @@
 import { state, keyReference } from "./piano/resources.js"
-import { startPlayer, startPlaying, stopPlaying, setPedal, pausePlaying, stopMidiPlaying } from "./piano/pianoPlayer.js";
 import getMidi from "./midi/midi-serializer.js";
+import {
+   startPlayer,
+   startPlaying,
+   stopPlaying,
+   setPedal,
+   pausePlaying,
+   stopMidiPlaying,
+   userMovesSeekBar
+} from "./piano/pianoPlayer.js";
 
 window.addEventListener("load", function() {
    state.kb = document.getElementById("kb").getSVGDocument();
@@ -62,6 +70,8 @@ window.addEventListener("load", function() {
            })
            .catch(error => console.log(error));
    });
+
+   this.document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
 });
 
 function preload(url, index) {
@@ -97,7 +107,7 @@ function togglePedal() {
 
 function playMidi() {
    if (state.player.length > 0) return; // NO CHAOS (prevent kicking off playback multiple times)
-   state.midiIndex = Number(document.getElementById("midiIndex").value);
+   state.midiIndex = Number(document.getElementById("seekBar").value);
    startPlayer(Number(state.midiIndex));
 }
 

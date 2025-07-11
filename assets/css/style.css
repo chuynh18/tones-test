@@ -2,10 +2,22 @@
     margin: 1vh 0;
 }
 
+td {
+    width: 33.33%
+}
+
 #controlsTable {
     width: 100%;
 }
 
 #volumeControl {
     float: right;
+}
+
+#seekBar {
+    width: 100%;
+}
+
+#damper {
+    width: 100%;
 }

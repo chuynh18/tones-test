@@ -4,7 +4,7 @@ export function startPlayer(startIndex = 0) {
    if (globalThis.midiFile) {
       const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
       const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
-      document.getElementById("midiTotalLength").innerHTML = `${playableTracks[0].playableMusic.length - 1}`;
+      updateSeekBarUI(playableTracks);
       
       let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
@@ -16,22 +16,25 @@ export function startPlayer(startIndex = 0) {
       
       playableTracks.forEach((track, trackNum) => {
          let offset = earliestStartTime; // chop out silence at start of playback
+         // convert ticks to milliseconds with 1 second grace period
+         latestEndTime = (1000 * latestEndTime / ticksPerSecond) - offset;
 
          if (startIndex > 0) {
             offset = 1000 * track.playableMusic[startIndex].startTime / ticksPerSecond;
+            latestEndTime -= offset;
          }
 
          for (let i = startIndex; i < track.playableMusic.length; i++) {
             const midiEvent = track.playableMusic[i];
             const startMillis = (1000 * midiEvent.startTime / ticksPerSecond) - offset;
-            console.log(startMillis);
             processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i);
          }
       });
 
+      console.log(latestEndTime);
       // reset player state when we reach end of the MIDI file
       state.player.push(setTimeout(function() {
-         state.player.length = 0;
+         stopMidiPlaying();
       }, latestEndTime));
 
    } else {
@@ -49,7 +52,7 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
             midiEvent.velocity
          );
          state.midiIndex = i;
-         document.getElementById("currentPosition").innerHTML = `Current note is ${state.midiIndex} out of `;
+         updateSeekBarUI();
       }, startMillis));})(i);
    } else if (midiEvent.type === "control change or channel mode message") {
       handleControlChangeEvent(midiEvent, startMillis, i);
@@ -113,10 +116,10 @@ export function setPedal(pedalState) {
    }
 }
 
-export function pausePlaying() {
+export function pausePlaying(updateUI = true) {
    state.player.forEach(queuedNote => clearTimeout(queuedNote));
    state.player.length = 0;
-   document.getElementById("midiIndex").setAttribute("value", state.midiIndex);
+   if (updateUI) updateSeekBarUI();
 }
 
 export function stopMidiPlaying() {
@@ -131,10 +134,26 @@ function handleControlChangeEvent(event, startMillis, i) {
          (function(i){state.player.push(setTimeout(function() {
             (event.controlChangeValue > 63) ? setPedal(true) : setPedal(false); 
             state.midiIndex = i;
-            document.getElementById("currentPosition").innerHTML = `Current note is ${state.midiIndex} out of `;
+            updateSeekBarUI();
          }, startMillis));})(i);
          break;
       
       default:
    }
+}
+
+function updateSeekBarUI(playableTracks) {
+   const seekBar = document.getElementById("seekBar");
+
+   if (playableTracks) {
+      seekBar.setAttribute("max", playableTracks[0].playableMusic.length - 1);
+   }
+
+   seekBar.value = state.midiIndex;
+}
+
+export function userMovesSeekBar() {
+   const seekBar = document.getElementById("seekBar");
+   pausePlaying(false);
+   startPlayer(Number(seekBar.value));
 }
