@@ -75,8 +75,6 @@ window.addEventListener("load", function() {
    document.getElementById("music").addEventListener("change", () => {
       clearFileSelector();
       const rawMidi = retrieveMidi(document.getElementById("music").value);
-      console.log(rawMidi);
-      state.midi = parseMidiArrayBuffer(rawMidi);
    });
 
    document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);

@@ -7,6 +7,7 @@ import { isMidi,
     handleSmpte } from "./midi-utility-functions.js";
 
 export default function parseMidiArrayBuffer(buffer) {
+    console.log(buffer);
     const dataView = new DataView(buffer);
     const header = parseHeader(dataView);
 
