@@ -4,8 +4,6 @@ export function startPlayer(startIndex = 0) {
    if (globalThis.midiFile) {
       const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
       const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
-      updateSeekBarUI(playableTracks);
-      
       let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
       let longestTrackLength = 0; // store length of current longest track for comparison purposes
@@ -18,6 +16,8 @@ export function startPlayer(startIndex = 0) {
             state.longestTrackIndex = trackNum;
          }
       });
+
+      updateSeekBarUI(playableTracks);
 
       // sync object for seeking across multi-track MIDI files
       const sync = syncSeekAcrossTracks(playableTracks, state.longestTrackIndex, startIndex);
