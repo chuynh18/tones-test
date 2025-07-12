@@ -1,9 +1,9 @@
 import { CONSTANTS, colors, state, keyReference } from "./resources.js"
 
 export function startPlayer(startIndex = 0) {
-   if (globalThis.midiFile) {
-      const ticksPerSecond = globalThis.midiFile.header.ticksPerSecond;
-      const playableTracks = globalThis.midiFile.tracks.filter(track => track.playableMusic);
+   if (state.midi) {
+      const ticksPerSecond = state.midi.header.ticksPerSecond;
+      const playableTracks = state.midi.tracks.filter(track => track.playableMusic);
       let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
       let longestTrackLength = 0; // store length of current longest track for comparison purposes

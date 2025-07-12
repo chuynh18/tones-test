@@ -1,5 +1,5 @@
 import { state, keyReference } from "./piano/resources.js"
-import getMidi from "./midi/midi-serializer.js";
+import parseMidiArrayBuffer from "./midi/midi-serializer.js";
 import {
    startPlayer,
    startPlaying,
@@ -30,7 +30,7 @@ window.addEventListener("load", function() {
 
    // attach event listeners to each key of the piano
    for (let i = 0; i < state.rects.length; i++) {
-      preload(`assets/audio/${Number(state.rects[i].id)}.mp3`, i);
+      preload(`assets/audio/samples/${Number(state.rects[i].id)}.mp3`, i);
 
       // penance for my sin of being not smart when assigning IDs to the piano keys in the SVG
       keyReference[state.rects[i].id] = i;
@@ -63,15 +63,23 @@ window.addEventListener("load", function() {
    const fileInput = document.getElementById("midi");
    
    fileInput.addEventListener("change", () => {
-       getMidi(fileInput)
-           .then(result => {
-               console.log(result);
-               globalThis.midiFile = result; // if you want to make it available in the global scope
-           })
-           .catch(error => console.log(error));
+      getMidi(fileInput)
+         .then(result => {
+            console.log(result);
+            state.midi = result;
+            clearMusicLibrarySelector();
+         })
+         .catch(error => console.log(error));
    });
 
-   this.document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
+   document.getElementById("music").addEventListener("change", () => {
+      clearFileSelector();
+      const rawMidi = retrieveMidi(document.getElementById("music").value);
+      console.log(rawMidi);
+      state.midi = parseMidiArrayBuffer(rawMidi);
+   });
+
+   document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
 });
 
 function preload(url, index) {
@@ -101,6 +109,18 @@ function preload(url, index) {
     req.send();
 }
 
+/**
+ * @param {HTMLInputElement} fileSelector
+ * @returns {Promise} Promise that should resolve to an object of MIDI tracks
+ */
+async function getMidi(fileSelector) {
+    const file = fileSelector.files[0];
+    console.log(file);
+    
+    const retVal = await file.arrayBuffer().then(buffer => parseMidiArrayBuffer(buffer));
+    return retVal;
+}
+
 function togglePedal() {
    state.pedal ? setPedal(false) : setPedal(true);
 }
@@ -113,4 +133,26 @@ function playMidi() {
 
 function setVolume() {
    state.volume = Number(document.getElementById("volume").value)/50;
+}
+
+function clearFileSelector() {
+   document.getElementById("midi").value ="";
+}
+
+function clearMusicLibrarySelector() {
+   document.getElementById("music").value = "";
+}
+
+function retrieveMidi(file) {
+   const url = `assets/audio/midi/${file}.mid`;
+   const req = new XMLHttpRequest;
+   req.open("GET", url, true);
+   req.responseType = 'arraybuffer';
+
+   req.onload = function() {
+      state.midi = parseMidiArrayBuffer(req.response);
+      console.log(state.midi);
+   }
+
+   req.send();
 }

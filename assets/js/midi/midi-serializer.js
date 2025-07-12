@@ -6,48 +6,32 @@ import { isMidi,
     validateMidi,
     handleSmpte } from "./midi-utility-functions.js";
 
-/**
- * @param {HTMLInputElement} fileSelector
- * @returns {Promise} Promise that should resolve to an object of MIDI tracks
- */
-export default async function getMidi(fileSelector) {
-    const file = fileSelector.files[0];
+export default function parseMidiArrayBuffer(buffer) {
+    const dataView = new DataView(buffer);
+    const header = parseHeader(dataView);
+
+    if (! header.isMidi) {
+        const fileName = file.name;
+        const fileSplit = file.name.split(".");
+        const fileExtension = fileSplit.length === 1 ? "an unknown type of" : `a ${fileSplit[fileSplit.length - 1]}`;
+        throw new Error(`Not a valid MIDI file. ${fileName} is ${fileExtension} file.`);
+    }
+
+    const tracks = parseTracks(dataView, header);
     
-    const retVal = await file.arrayBuffer().then(buffer =>
-        {
-            if (fileSizeExceedsThreshold(file)) {
-                throw new Error(`Selected file is ${file.size} bytes which is larger than the threshold of ${applicationSettings.maxFileSizeBytes} bytes.`);
-            }
+    if (! validateMidi(header, tracks)) {
+        return;
+    }
 
-            const dataView = new DataView(buffer);
-            const header = parseHeader(dataView);
+    const midi = {
+        header: header,
+        tracks: tracks
+    };
 
-            if (! header.isMidi) {
-                const fileName = file.name;
-                const fileSplit = file.name.split(".");
-                const fileExtension = fileSplit.length === 1 ? "an unknown type of" : `a ${fileSplit[fileSplit.length - 1]}`;
-                throw new Error(`Not a valid MIDI file. ${fileName} is ${fileExtension} file.`);
-            }
-        
-            const tracks = parseTracks(dataView, header);
-            
-            if (! validateMidi(header, tracks)) {
-                return;
-            }
+    // ugh, ugly
+    midi.header.ticksPerSecond = midi.header.division*midi.tracks[0].track[81].data.musicTempo/60;
 
-            const midi = {
-                header: header,
-                tracks: tracks
-            };
-
-            // ugh, ugly
-            midi.header.ticksPerSecond = midi.header.division*midi.tracks[0].track[81].data.musicTempo/60;
-
-            return midi;
-        }
-    );
-
-    return retVal;
+    return midi;
 }
 
 /**
@@ -115,13 +99,4 @@ function parseTracks(dataView, header) {
     });
     
     return tracks;
-}
-
-/**
- * Returns true if input file's size is less than the set threshold
- * @param {File} file A file object from an HTMLInputElement
- * @param {number} sizeThreshold Maximum file size to parse
- */
-function fileSizeExceedsThreshold(file, sizeThreshold = applicationSettings.maxFileSizeBytes) {
-    return file.size > sizeThreshold;
 }
