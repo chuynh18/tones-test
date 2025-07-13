@@ -81,17 +81,15 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    key.style.fill = color;
 
    const note = state.audio[i];
-   state.audio[i].currentTime = state.audioContext.currentTime;
+   note.currentTime = state.audioContext.currentTime;
+   state.currentlyHeldDownKeys[i] = true;
    
    note.source = state.audioContext.createBufferSource();
    note.source.buffer = note.buffer;
    note.gain = state.audioContext.createGain();
    note.source.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
-
-   note.gain.gain.value = gain * state.volume;
-
-   state.currentlyHeldDownKeys[i] = true;
+   note.gain.gain.linearRampToValueAtTime(gain * state.volume, state.audioContext.currentTime + 0.06);
 
    note.source.start(0);
 }
@@ -103,10 +101,10 @@ export function stopPlaying(i, key) {
    state.currentlyHeldDownKeys[i] = false;
 }
 
-function noteStop(note) {
+function noteStop(note, endingVolume = 0.05, noteFadeDuration = CONSTANTS.noteFade) {
    try {
       if (note.source && !state.pedal) {
-      note.gain.gain.exponentialRampToValueAtTime(0.05, state.audioContext.currentTime + CONSTANTS.noteFade);
+      note.gain.gain.linearRampToValueAtTime(endingVolume, state.audioContext.currentTime + noteFadeDuration);
       note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
       }
    } catch (e) {
@@ -124,7 +122,7 @@ export function setPedal(pedalState) {
       damperButton.textContent = "Damper pedal OFF";
 
       for (let i = 0; i < state.audio.length; i++) {
-         if (! state.currentlyHeldDownKeys[i]) noteStop(state.audio[i]);  
+         if (! state.currentlyHeldDownKeys[i]) noteStop(state.audio[i], 0.15, CONSTANTS.noteFade + 0.4);  
       }   
    }
 }
