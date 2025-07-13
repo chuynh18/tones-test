@@ -63,22 +63,36 @@ window.addEventListener("load", function() {
    const fileInput = document.getElementById("midi");
    
    fileInput.addEventListener("change", () => {
-      getMidi(fileInput)
+      decideBasedOnFileExtension(fileInput);
+   });
+
+   document.getElementById("music").addEventListener("change", () => {
+      clearFileSelector();
+      retrieveMidi(document.getElementById("music").value);
+   });
+
+   document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
+});
+
+function decideBasedOnFileExtension(fileInput) {
+   const fileNameArray = fileInput.value.split(".");
+   const fileExtension = fileNameArray[fileNameArray.length - 1];
+
+   switch(fileExtension) {
+      case "mid":
+      case "midi":
+         getMidi(fileInput)
          .then(result => {
             console.log(result);
             state.midi = result;
             clearMusicLibrarySelector();
          })
          .catch(error => console.log(error));
-   });
-
-   document.getElementById("music").addEventListener("change", () => {
-      clearFileSelector();
-      const rawMidi = retrieveMidi(document.getElementById("music").value);
-   });
-
-   document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
-});
+         break;
+      default:
+         throw new Error("Unable to determine filetype based on file name.");
+   }
+}
 
 function preload(url, index) {
    const req = new XMLHttpRequest;
@@ -113,7 +127,6 @@ function preload(url, index) {
  */
 async function getMidi(fileSelector) {
     const file = fileSelector.files[0];
-    console.log(file);
     
     const retVal = await file.arrayBuffer().then(buffer => parseMidiArrayBuffer(buffer));
     return retVal;

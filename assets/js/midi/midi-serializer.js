@@ -7,15 +7,11 @@ import { isMidi,
     handleSmpte } from "./midi-utility-functions.js";
 
 export default function parseMidiArrayBuffer(buffer) {
-    console.log(buffer);
     const dataView = new DataView(buffer);
     const header = parseHeader(dataView);
 
     if (! header.isMidi) {
-        const fileName = file.name;
-        const fileSplit = file.name.split(".");
-        const fileExtension = fileSplit.length === 1 ? "an unknown type of" : `a ${fileSplit[fileSplit.length - 1]}`;
-        throw new Error(`Not a valid MIDI file. ${fileName} is ${fileExtension} file.`);
+        throw new Error(`File is either corrupted or not a valid MIDI file.`);
     }
 
     const tracks = parseTracks(dataView, header);
