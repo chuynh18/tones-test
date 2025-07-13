@@ -88,7 +88,7 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    note.gain = state.audioContext.createGain();
    note.source.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
-   note.gain.gain.linearRampToValueAtTime(gain * state.volume, state.audioContext.currentTime + 0.005);
+   note.gain.gain.setTargetAtTime(gain * state.volume, state.audioContext.currentTime, 0.005);
 
    note.source.start(0);
 }
@@ -100,11 +100,12 @@ export function stopPlaying(i, key) {
    state.currentlyHeldDownKeys[i] = false;
 }
 
-function noteStop(note, endingVolume = 0.05, noteFadeDuration = CONSTANTS.noteFade) {
+function noteStop(note, endingVolume = 0.001, noteFadeDuration = CONSTANTS.noteFade) {
    try {
       if (note.source && !state.pedal) {
-      note.gain.gain.linearRampToValueAtTime(endingVolume, state.audioContext.currentTime + noteFadeDuration);
-      note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
+         note.gain.gain.setTargetAtTime(endingVolume, state.audioContext.currentTime, noteFadeDuration);
+         // note.gain.gain.linearRampToValueAtTime(endingVolume, state.audioContext.currentTime + noteFadeDuration);
+         note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
       }
    } catch (e) {
       console.log(e);

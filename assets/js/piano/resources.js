@@ -1,7 +1,7 @@
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
 export const CONSTANTS = {
-   noteFade: 0.4
+   noteFade: 0.8
 }
 
 export const state = {
