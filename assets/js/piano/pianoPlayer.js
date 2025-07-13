@@ -17,6 +17,7 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
+      setPedal(false); // reset pedal back to off in case playback stopped before the damper pedal was reset
       updateSeekBarUI(playableTracks);
 
       // sync object for seeking across multi-track MIDI files
@@ -90,6 +91,8 @@ export function startPlaying(i, key, color = "red", gain = 1) {
 
    note.gain.gain.value = gain * state.volume;
 
+   state.currentlyHeldDownKeys[i] = true;
+
    note.source.start(0);
 }
 
@@ -97,6 +100,7 @@ export function stopPlaying(i, key) {
    key.style.fill = key.dataset.fill;
    const note = state.audio[i];
    noteStop(note);
+   state.currentlyHeldDownKeys[i] = false;
 }
 
 function noteStop(note) {
@@ -120,7 +124,7 @@ export function setPedal(pedalState) {
       damperButton.textContent = "Damper pedal OFF";
 
       for (let i = 0; i < state.audio.length; i++) {
-         noteStop(state.audio[i]);
+         if (! state.currentlyHeldDownKeys[i]) noteStop(state.audio[i]);  
       }   
    }
 }
