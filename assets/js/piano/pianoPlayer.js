@@ -89,7 +89,7 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    note.gain = state.audioContext.createGain();
    note.source.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
-   note.gain.gain.linearRampToValueAtTime(gain * state.volume, state.audioContext.currentTime + 0.06);
+   note.gain.gain.linearRampToValueAtTime(gain * state.volume, state.audioContext.currentTime + 0.005);
 
    note.source.start(0);
 }
