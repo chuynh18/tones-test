@@ -17,6 +17,8 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
+      latestEndTime = (1000 * latestEndTime / ticksPerSecond) - seekOffset; // convert ticks to milliseconds
+
       setPedal(false); // reset pedal back to off in case playback stopped before the damper pedal was reset
       updateSeekBarUI(playableTracks);
 
@@ -27,6 +29,7 @@ export function startPlayer(startIndex = 0) {
          if (startIndex > 0) {
             seekOffset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond; // convert to ms
             if (trackNum === state.longestTrackIndex) latestEndTime -= seekOffset;
+
          }
 
          for (let i = sync[trackNum].startIndex; i < track.playableMusic.length; i++) {
@@ -38,8 +41,6 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
-      latestEndTime = (1000 * latestEndTime / ticksPerSecond) - seekOffset; // convert ticks to milliseconds
-      
       // reset player state when we reach end of the MIDI file
       state.player.push(setTimeout(function() {
          stopMidiPlaying();
