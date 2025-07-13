@@ -4,12 +4,12 @@ export function startPlayer(startIndex = 0) {
    if (state.midi) {
       const ticksPerSecond = state.midi.header.ticksPerSecond;
       const playableTracks = state.midi.tracks.filter(track => track.playableMusic);
-      let earliestStartTime = Infinity; // some MIDIs start with long silences, let's chop that out
+      let seekOffset = Infinity; // some MIDIs start with long silences, let's chop that out
       let latestEndTime = 0; // get end time of MIDI so that we can reset player state at the end of playback
       let longestTrackLength = 0; // store length of current longest track for comparison purposes
-
+      
       playableTracks.forEach((track, trackNum) => {
-         if (earliestStartTime > track.startTime) earliestStartTime = track.startTime;
+         if (seekOffset > track.startTime) seekOffset = track.startTime;
          if (longestTrackLength < track.playableMusic.length) {
             longestTrackLength = track.playableMusic.length;
             latestEndTime = track.endTime
@@ -24,12 +24,8 @@ export function startPlayer(startIndex = 0) {
       const sync = syncSeekAcrossTracks(playableTracks, state.longestTrackIndex, startIndex);
 
       playableTracks.forEach((track, trackNum) => {
-         let seekOffset = earliestStartTime; // chop out silence at start of playback
-         // convert ticks to milliseconds with 1 second grace period
-         latestEndTime = (1000 * latestEndTime / ticksPerSecond) - seekOffset;
-
          if (startIndex > 0) {
-            seekOffset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond; // convert to millis
+            seekOffset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond; // convert to ms
             if (trackNum === state.longestTrackIndex) latestEndTime -= seekOffset;
          }
 
@@ -42,10 +38,12 @@ export function startPlayer(startIndex = 0) {
          }
       });
 
+      latestEndTime = (1000 * latestEndTime / ticksPerSecond) - seekOffset; // convert ticks to milliseconds
+      
       // reset player state when we reach end of the MIDI file
       state.player.push(setTimeout(function() {
          stopMidiPlaying();
-      }, latestEndTime));
+      }, latestEndTime + 500));
 
    } else {
       console.log("MIDI not loaded!");
@@ -144,7 +142,7 @@ function handleControlChangeEvent(event, startMillis, i) {
 
          (function(i){state.player.push(setTimeout(function() {
             (event.controlChangeValue > 63) ? setPedal(true) : setPedal(false); 
-            state.midiIndex = i;
+            if (i > state.midiIndex) state.midiIndex = i;
             updateSeekBarUI();
          }, startMillis));})(i);
          break;
