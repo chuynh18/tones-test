@@ -100,12 +100,12 @@ export function stopPlaying(i, key) {
    state.currentlyHeldDownKeys[i] = false;
 }
 
-function noteStop(note, endingVolume = 0.001, noteFadeDuration = CONSTANTS.noteFade) {
+function noteStop(note, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
    try {
       if (note.source && !state.pedal) {
          note.gain.gain.setTargetAtTime(endingVolume, state.audioContext.currentTime, noteFadeDuration);
          // note.gain.gain.linearRampToValueAtTime(endingVolume, state.audioContext.currentTime + noteFadeDuration);
-         note.source.stop(state.audioContext.currentTime + CONSTANTS.noteFade);
+         note.source.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
       }
    } catch (e) {
       console.log(e);
