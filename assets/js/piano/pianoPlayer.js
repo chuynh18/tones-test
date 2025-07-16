@@ -207,8 +207,8 @@ function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLon
  * @param {Number} startTimeOfLongestTrack MIDI start time of a MIDI event
  */
 function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, left, right) {
-   function mean() { // arithmetic mean, uses arguments object so it is variadic even though we will only ever feed 2 args
-      return Array.from(arguments).reduce((accumulator, currentValue) => accumulator + currentValue) / arguments.length;
+   function mean(...args) { // arithmetic mean, uses arguments object so it is variadic even though we will only ever feed 2 args
+      return args.reduce((accumulator, currentValue) => accumulator + currentValue) / args.length;
    }
 
    if (!left) left = 0;
