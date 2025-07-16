@@ -1,4 +1,4 @@
-import { state, keyReference } from "./piano/resources.js"
+import { state, keyReference, CONSTANTS } from "./piano/resources.js"
 import parseMidiArrayBuffer from "./midi/midi-serializer.js";
 import {
    startPlayer,
@@ -11,20 +11,20 @@ import {
 } from "./piano/pianoPlayer.js";
 
 window.addEventListener("load", function() {
-   state.kb = document.getElementById("kb").getSVGDocument();
-   state.rects = state.kb.getElementsByTagName("rect");
+   const keyboard = document.getElementById("kb").getSVGDocument();
+   state.rects = keyboard.getElementsByTagName("rect");
 
-   state.kb.addEventListener("click", function() {
+   keyboard.addEventListener("click", function() {
       state.audioContext.resume().then(() => {
          console.log("AudioContext is now active.");
       });
    }, {once: true});
 
-   state.kb.addEventListener("pointerdown", function() {
+   keyboard.addEventListener("pointerdown", function() {
       state.mouseDown = true;
    });
 
-   state.kb.addEventListener("pointerup", function() {
+   keyboard.addEventListener("pointerup", function() {
       state.mouseDown = false;
    });
 
@@ -32,7 +32,8 @@ window.addEventListener("load", function() {
    for (let i = 0; i < state.rects.length; i++) {
       preload(`assets/audio/samples/${Number(state.rects[i].id)}.mp3`, i);
 
-      // penance for my sin of being not smart when assigning IDs to the piano keys in the SVG
+      // I think I assigned IDs in the piano keyboard SVG in the proper order, but I defined all the white keys first
+      // then I defined all the black keys. So when iterating through 
       keyReference[state.rects[i].id] = i;
 
       state.rects[i].addEventListener("pointerdown", function() {
@@ -136,14 +137,29 @@ function togglePedal() {
    state.pedal ? setPedal(false) : setPedal(true);
 }
 
+// plays currently selected MIDI which is stored in state.midi (see startPlayer function)
 function playMidi() {
    if (state.player.length > 0) return; // NO CHAOS (prevent kicking off playback multiple times)
+
+   // partial workaround for the browser not cleanly resetting the page state upon cached page refresh
+   if (! state.midi && document.getElementById("music").value) {
+      state.midiIndex = 0
+      retrieveMidi(
+         document.getElementById("music").value,
+         function() {
+            startPlayer(state.midiIndex);
+         }
+      );
+
+      return;
+   }
+
    state.midiIndex = Number(document.getElementById("seekBar").value);
    startPlayer(Number(state.midiIndex));
 }
 
 function setVolume() {
-   state.volume = Number(document.getElementById("volume").value)/50;
+   state.volume = Number(document.getElementById("volume").value) / CONSTANTS.defaultVolume;
 }
 
 function clearFileSelector() {
@@ -154,7 +170,8 @@ function clearMusicLibrarySelector() {
    document.getElementById("music").value = "";
 }
 
-function retrieveMidi(file) {
+function retrieveMidi(file, callback) {
+   if (! file) return;
    const url = `assets/audio/midi/${file}.mid`;
    const req = new XMLHttpRequest;
    req.open("GET", url, true);
@@ -163,6 +180,7 @@ function retrieveMidi(file) {
    req.onload = function() {
       state.midi = parseMidiArrayBuffer(req.response);
       console.log(state.midi);
+      if (typeof callback === "function") callback();
    }
 
    req.send();

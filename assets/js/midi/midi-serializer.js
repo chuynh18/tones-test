@@ -1,4 +1,4 @@
-import { applicationSettings, midiConstants } from "./midi-constants.js";
+import { midiConstants } from "./midi-constants.js";
 import { parseTrack, postprocess } from "./track.js";
 import { isMidi,
     parseBytes,
@@ -6,6 +6,11 @@ import { isMidi,
     validateMidi,
     handleSmpte } from "./midi-utility-functions.js";
 
+/**
+ * 
+ * @param {ArrayBuffer} buffer midi file as an ArrayBuffer
+ * @returns {Object} midi object
+ */
 export default function parseMidiArrayBuffer(buffer) {
     const dataView = new DataView(buffer);
     const header = parseHeader(dataView);

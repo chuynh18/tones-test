@@ -1,13 +1,13 @@
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
 export const CONSTANTS = {
-   noteFade: 0.2
+   noteFade: 0.2,
+   defaultVolume: 50
 }
 
 export const state = {
    mouseDown: false,
    audioContext: new AudioContext(),
-   kb: undefined,
    audio: [], // holds all decoded audio resources
    pedal: false, // damper pedal state
    midiIndex: 0, // the index of the last midi event processed
