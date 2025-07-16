@@ -6,7 +6,7 @@ Almost exactly six years later, my coworkers and I were setting up some cloud in
 
 Piano sounds from https://theremin.music.uiowa.edu/MISpiano.html
 
-Piano SVG Copyright 2005 by Lauri Kaila and licensed under the GNU Free Documentation License, Version 1.2. The original version covered one octave and was extended by me to an 88-key keyboard.
+[Piano SVG](https://commons.wikimedia.org/wiki/File:PianoKeyboard.svg) Copyright 2005 by Lauri Kaila and licensed under the GNU Free Documentation License, Version 1.2. The original version covered one octave and was extended by me to an 88-key keyboard.
 
 The preselected MIDIs are the ones I mentioned above by Terry Smythe.
 
