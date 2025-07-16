@@ -78,6 +78,7 @@ function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
 
 export function startPlaying(i, key, color = "red", gain = 1) {
    key.style.fill = color;
+   key.setAttribute("class", "pressed");
 
    const note = state.audio[i];
    note.currentTime = state.audioContext.currentTime;
@@ -95,6 +96,7 @@ export function startPlaying(i, key, color = "red", gain = 1) {
 
 export function stopPlaying(i, key) {
    key.style.fill = key.dataset.fill;
+   key.setAttribute("class", "unpressed");
    const note = state.audio[i];
    noteStop(note);
    state.currentlyHeldDownKeys[i] = false;

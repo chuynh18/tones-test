@@ -6,6 +6,8 @@ Almost exactly six years later, my coworkers and I were setting up some cloud in
 
 Piano sounds from https://theremin.music.uiowa.edu/MISpiano.html
 
-Piano SVG from... I forgot, but it only had 12 keys so I duplicated them in Inkscape to get all 88 keys
+Piano SVG Copyright 2005 by Lauri Kaila and licensed under the GNU Free Documentation License, Version 1.2. The original version covered one octave and was extended by me to an 88-key keyboard.
+
+The preselected MIDIs are the ones I mentioned above by Terry Smythe.
 
 You can see the very early [proof-of-concept of this piano here](https://chuynh18.github.io/tones-test/sine.html).
