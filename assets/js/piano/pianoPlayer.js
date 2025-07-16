@@ -173,8 +173,15 @@ export function userMovesSeekBar() {
 
 // helper function for keeping multi track MIDI files in sync when seeking
 // we seek based on the index of the longest track (the track with the most notes)
-// but sometimes the other tracks will not have notes that are played at the same moment in time
+// but sometimes the other tracks will not have notes that are played at the exact same moment in time
 // so we will have to realign them by adding a time offset to the other tracks
+/**
+ *
+ * @param {Array.<Object>} playableTracks array of playable tracks
+ * @param {Number} longestTrackIndex the index of the longest (in terms of MIDI events) track
+ * @param {Number} startIndexOfLongestTrack the index from which to start playing (i.e. the user scrubbed the seek bar)
+ * @returns {Array.<Object>} array of seek objects used to align playback of multi-track MIDI files
+ */
 function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLongestTrack) {
    const seek = [];
    const startTimeOfLongestTrack = playableTracks[longestTrackIndex].playableMusic[startIndexOfLongestTrack].startTime;
@@ -194,15 +201,30 @@ function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLon
    return seek;
 }
 
-// todo: replace with binary search
-function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack) {
-   for (let i = 0; i < track.playableMusic.length; i++) {
-      if (track.playableMusic[i].startTime > startTimeOfLongestTrack) {
-         return {
-            startIndex: i - 1,
-            offset: startTimeOfLongestTrack - track.playableMusic[i - 1].startTime,
-            startTime: track.playableMusic[i - 1].startTime
-         };
-      }
+/**
+ *
+ * @param {Object} track a playable track (deserialized by midijs from midi file)
+ * @param {Number} startTimeOfLongestTrack MIDI start time of a MIDI event
+ */
+function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, left, right) {
+   function mean() { // arithmetic mean, uses arguments object so it is variadic even though we will only ever feed 2 args
+      return Array.from(arguments).reduce((accumulator, currentValue) => accumulator + currentValue) / arguments.length;
+   }
+
+   if (!left) left = 0;
+   if (!right) right = track.playableMusic.length - 1;
+
+   let middle = Math.floor(mean(left, right));
+
+   if (track.playableMusic[middle].startTime > startTimeOfLongestTrack && track.playableMusic[middle - 1].startTime <= startTimeOfLongestTrack) {
+      return {
+         startIndex: middle - 1,
+         offset: startTimeOfLongestTrack - track.playableMusic[middle - 1].startTime,
+         startTime: track.playableMusic[middle - 1].startTime
+      };
+   } else if (track.playableMusic[middle].startTime > startTimeOfLongestTrack) {
+      return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, 0, middle);
+   } else {
+      return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, middle, right);
    }
 }
