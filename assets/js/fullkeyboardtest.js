@@ -33,7 +33,8 @@ window.addEventListener("load", function() {
       preload(`assets/audio/samples/${Number(state.rects[i].id)}.mp3`, i);
 
       // I think I assigned IDs in the piano keyboard SVG in the proper order, but I defined all the white keys first
-      // then I defined all the black keys. So when iterating through 
+      // then I defined all the black keys. So when iterating through the SVG rects, the white keys are indexed first
+      // then the black keys are indexed next. I use this object to reconcile the numbering differences.
       keyReference[state.rects[i].id] = i;
 
       state.rects[i].addEventListener("pointerdown", function() {

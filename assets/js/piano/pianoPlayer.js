@@ -76,6 +76,13 @@ function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
    }, duration);
 }
 
+/**
+ * Start playing a note
+ * @param {Number} i the note number to be played (# of the key on the piano, 1 through 88)
+ * @param {SVGElement} key the key SVG rect
+ * @param {String} color the color of the key when it is being played, defaults to "red"
+ * @param {Number} gain how loud the note should be
+ */
 export function startPlaying(i, key, color = "red", gain = 1) {
    key.style.fill = color;
    key.setAttribute("class", "pressed");
@@ -84,6 +91,10 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    note.currentTime = state.audioContext.currentTime;
    state.currentlyHeldDownKeys[i] = true;
    
+   // I was thinking it's inefficient to create a BufferSource every time a note is played, but the MDN docs say
+   // this is the right way to do it. They are very inexpensive to create and will be garbage collected, and I am
+   // reusing the underlying AudioBuffer which is the more expensive thing to instantiate. Also, BufferSources can only
+   // be played once, so they have to be recreated anyway.
    note.source = state.audioContext.createBufferSource();
    note.source.buffer = note.buffer;
    note.gain = state.audioContext.createGain();
@@ -94,6 +105,11 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    note.source.start(0);
 }
 
+/**
+ * 
+ * @param {Number} i the note number to be played (# of the key on the piano, 1 through 88)
+ * @param {SVGElement} key the key SVG rect
+ */
 export function stopPlaying(i, key) {
    key.style.fill = key.dataset.fill;
    key.setAttribute("class", "unpressed");
