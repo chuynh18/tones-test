@@ -95,8 +95,10 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    // this is the right way to do it. They are very inexpensive to create and will be garbage collected, and I am
    // reusing the underlying AudioBuffer which is the more expensive thing to instantiate. Also, BufferSources can only
    // be played once, so they have to be recreated anyway.
-   note.source = state.audioContext.createBufferSource();
-   note.source.buffer = note.buffer;
+   note.source = new AudioBufferSourceNode(
+      state.audioContext,
+      {buffer: note.buffer}
+   );
    note.gain = state.audioContext.createGain();
    note.source.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
