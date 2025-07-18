@@ -69,7 +69,7 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
 }
 
 function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
-   const volume = velocity/127;
+   const volume = velocity / 127; // maximum MIDI velocity is 7 bit number
    startPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, volume);
    setTimeout(function() {
       stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]])
@@ -124,7 +124,6 @@ function noteStop(note, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFad
    try {
       if (note.source && !state.pedal) {
          note.gain.gain.setTargetAtTime(endingVolume, state.audioContext.currentTime, noteFadeDuration);
-         // note.gain.gain.linearRampToValueAtTime(endingVolume, state.audioContext.currentTime + noteFadeDuration);
          note.source.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
       }
    } catch (e) {
