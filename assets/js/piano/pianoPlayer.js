@@ -124,6 +124,9 @@ export function stopPlaying(i, key) {
    state.currentlyHeldDownKeys[i] = false;
    if (!state.pedal) {
       const note = state.audio[i];
+      // yes this is mutating the array from the front but I expect there to be no performance implications because
+      // when the note is stopped via this path, the damper pedal is not pressed down, so only one instance of each
+      // note should be playing at a time, therefore the array length is 1 when the note is being stopped
       const noteBufferSource = state.bufferSources[i].shift();
       noteStop(note, noteBufferSource);
    }
@@ -132,10 +135,8 @@ export function stopPlaying(i, key) {
 
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
    try {
-      if (noteBufferSource && !state.pedal) {
          note.gain.gain.setTargetAtTime(endingVolume, state.audioContext.currentTime, noteFadeDuration);
          noteBufferSource.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
-      }
    } catch (e) {
       console.log(e);
    }
@@ -175,15 +176,17 @@ export function stopMidiPlaying(updateUI = true) {
 function handleControlChangeEvent(event, startMillis, i) {
    switch(event.controlChangeType) {
       case "damper pedal toggle":
-
          (function(i){state.player.push(setTimeout(function() {
             (event.controlChangeValue > 63) ? setPedal(true) : setPedal(false); 
             if (i > state.midiIndex) state.midiIndex = i;
             updateSeekBarUI();
          }, startMillis));})(i);
          break;
+      case "una corda toggle":
       
+         break;
       default:
+         console.log("Unhandled control change event:", event);
    }
 }
 

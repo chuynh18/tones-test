@@ -11,6 +11,7 @@ export const state = {
    audio: [], // holds all decoded audio resources
    bufferSources: [], // holds all actively playing AudioBufferSourceNodes
    pedal: false, // damper pedal state
+   unaCorda: false, // soft pedal
    midiIndex: 0, // the index of the last midi event processed
    rects: undefined,
    player: [], // holds all setTimeouts so that we can destroy them all on pause/stop
