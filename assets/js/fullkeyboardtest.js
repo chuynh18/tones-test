@@ -52,8 +52,12 @@ window.addEventListener("load", function() {
       });
 
       state.rects[i].addEventListener("pointerleave", function() {
-         stopPlaying(i, state.rects[i]);
+         if (state.mouseDown) {
+            stopPlaying(i, state.rects[i]);
+         }
       });
+   
+      state.bufferSources[i] = []; // place empty arrays into bufferSources array
    }
 
    document.getElementById("damper").addEventListener("click", togglePedal);

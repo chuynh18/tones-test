@@ -95,16 +95,22 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    // this is the right way to do it. They are very inexpensive to create and will be garbage collected, and I am
    // reusing the underlying AudioBuffer which is the more expensive thing to instantiate. Also, BufferSources can only
    // be played once, so they have to be recreated anyway.
-   note.source = new AudioBufferSourceNode(
+   
+   const noteSource = state.bufferSources[i];
+   
+   noteSource[noteSource.length] = new AudioBufferSourceNode(
       state.audioContext,
       {buffer: note.buffer}
    );
+
+   const noteToBePlayed = noteSource[noteSource.length - 1]
+
    note.gain = state.audioContext.createGain();
-   note.source.connect(note.gain);
+   noteToBePlayed.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
    note.gain.gain.setTargetAtTime(gain * state.volume, state.audioContext.currentTime, 0.005);
 
-   note.source.start(0);
+   noteToBePlayed.start(0);
 }
 
 /**
@@ -115,16 +121,20 @@ export function startPlaying(i, key, color = "red", gain = 1) {
 export function stopPlaying(i, key) {
    key.style.fill = key.dataset.fill;
    key.setAttribute("class", "unpressed");
-   const note = state.audio[i];
-   noteStop(note);
    state.currentlyHeldDownKeys[i] = false;
+   if (!state.pedal) {
+      const note = state.audio[i];
+      const noteBufferSource = state.bufferSources[i].shift();
+      noteStop(note, noteBufferSource);
+   }
+   
 }
 
-function noteStop(note, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
+function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
    try {
-      if (note.source && !state.pedal) {
+      if (noteBufferSource && !state.pedal) {
          note.gain.gain.setTargetAtTime(endingVolume, state.audioContext.currentTime, noteFadeDuration);
-         note.source.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
+         noteBufferSource.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
       }
    } catch (e) {
       console.log(e);
@@ -141,7 +151,12 @@ export function setPedal(pedalState) {
       damperButton.textContent = "Damper pedal OFF";
 
       for (let i = 0; i < state.audio.length; i++) {
-         if (! state.currentlyHeldDownKeys[i]) noteStop(state.audio[i], 0.15, CONSTANTS.noteFade + 0.4);  
+         if (! state.currentlyHeldDownKeys[i]) {
+            state.bufferSources[i].forEach(buffer => {
+               noteStop(state.audio[i], buffer, 0.15, CONSTANTS.noteFade + 0.4);
+            });
+            state.bufferSources[i].length = 0;
+         }
       }   
    }
 }

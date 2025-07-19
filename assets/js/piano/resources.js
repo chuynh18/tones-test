@@ -9,6 +9,7 @@ export const state = {
    mouseDown: false,
    audioContext: new AudioContext(),
    audio: [], // holds all decoded audio resources
+   bufferSources: [], // holds all actively playing AudioBufferSourceNodes
    pedal: false, // damper pedal state
    midiIndex: 0, // the index of the last midi event processed
    rects: undefined,
