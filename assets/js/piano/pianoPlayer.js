@@ -270,6 +270,5 @@ function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, left, 
 
 function computeColor(trackNum, velocity) {
    const color = colors[trackNum];
-   console.log(`hsl(${color[0]}, ${color[1]}%, ${100 - (50 * velocity / CONSTANTS.maximumNoteVelocity)}%)`);
    return `hsl(${color[0]}, ${color[1]}%, ${100 - (50 * velocity / CONSTANTS.maximumNoteVelocity)}%)`;
 }
