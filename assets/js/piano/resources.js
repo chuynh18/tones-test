@@ -2,7 +2,8 @@ const AudioContext = window.AudioContext || window.webkitAudioContext;
 
 export const CONSTANTS = {
    noteFade: 0.2,
-   defaultVolume: 50
+   defaultVolume: 50,
+   maximumNoteVelocity: 127
 }
 
 export const state = {
@@ -21,24 +22,20 @@ export const state = {
    currentlyHeldDownKeys: []
 };
 
-// probably don't need 16 colors but just in case... cause I'm not guarding against bad access =)
+// these are HSL values... except we won't use L
 export const colors = [
-   "Red",
-   "Blue",
-   "Green",
-   "GoldenRod",
-   "Orchid",
-   "Aqua",
-   "AliceBlue",
-   "BlanchedAlmond",
-   "Brown",
-   "DodgerBlue",
-   "FireBrick",
-   "LightCoral",
-   "Navy",
-   "PapayaWhip",
-   "SaddleBrown",
-   "SeaGreen"
+   [0, 100, 50],
+   [240, 100, 50],
+   [120, 100, 50],
+   [60, 100, 50],
+   [180, 100, 50],
+   [300, 100, 50],
+   [30, 100, 50],
+   [90, 100, 50],
+   [150, 100, 50],
+   [210, 100, 50],
+   [270, 100, 50],
+   [330, 100, 50]
 ];
 
 export const keyReference = {};

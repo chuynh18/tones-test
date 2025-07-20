@@ -57,7 +57,7 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
          playNoteForDuration(
             midiEvent.pianoNote,
             1000 * midiEvent.duration / ticksPerSecond,
-            colors[trackNum],
+            computeColor(trackNum, midiEvent.velocity),
             midiEvent.velocity
          );
          if (i > state.midiIndex) state.midiIndex = i;
@@ -98,6 +98,8 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    
    const noteSource = state.bufferSources[i];
    
+   // store references to each AudioBufferSourceNode so that we can KILL THEM ALL when the damper pedal is released
+   // (I'm from Buenos Aires)
    noteSource[noteSource.length] = new AudioBufferSourceNode(
       state.audioContext,
       {buffer: note.buffer}
@@ -124,9 +126,10 @@ export function stopPlaying(i, key) {
    state.currentlyHeldDownKeys[i] = false;
    if (!state.pedal) {
       const note = state.audio[i];
-      // yes this is mutating the array from the front but I expect there to be no performance implications because
-      // when the note is stopped via this path, the damper pedal is not pressed down, so only one instance of each
-      // note should be playing at a time, therefore the array length is 1 when the note is being stopped
+      // This is mutating the array from the front. generally, though, the array length should be 0 or 1, so there
+      // should not be performance implications (well computers today are way too fast so it doesn't actually matter)
+      // However there is an edge case: some of the MIDIs I've found are glitchy as heck and have multiple tracks for
+      // no reason at all and sometimes spam the same note multiple times before releasing. Still, computers are fast!
       const noteBufferSource = state.bufferSources[i].shift();
       noteStop(note, noteBufferSource);
    }
@@ -154,6 +157,7 @@ export function setPedal(pedalState) {
       for (let i = 0; i < state.audio.length; i++) {
          if (! state.currentlyHeldDownKeys[i]) {
             state.bufferSources[i].forEach(buffer => {
+               // arbitrarily chosen numbers because they sound good to my ears
                noteStop(state.audio[i], buffer, 0.15, CONSTANTS.noteFade + 0.4);
             });
             state.bufferSources[i].length = 0;
@@ -262,4 +266,10 @@ function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, left, 
    } else {
       return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, middle, right);
    }
+}
+
+function computeColor(trackNum, velocity) {
+   const color = colors[trackNum];
+   console.log(`hsl(${color[0]}, ${color[1]}%, ${100 - (50 * velocity / CONSTANTS.maximumNoteVelocity)}%)`);
+   return `hsl(${color[0]}, ${color[1]}%, ${100 - (50 * velocity / CONSTANTS.maximumNoteVelocity)}%)`;
 }
