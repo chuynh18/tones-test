@@ -9,10 +9,15 @@ import {
    stopMidiPlaying,
    userMovesSeekBar
 } from "./piano/pianoPlayer.js";
+import { resizeVisualizerCanvas } from "./visualizer/visualizer.js";
 
 window.addEventListener("load", function() {
-   const keyboard = document.getElementById("kb").getSVGDocument();
+   const keyboardElement = document.getElementById("kb");
+   const keyboard = keyboardElement.getSVGDocument();
+   const visualizer = document.getElementById("visualizer");
    state.rects = keyboard.getElementsByTagName("rect");
+
+   resizeVisualizerCanvas(keyboardElement, visualizer);
 
    keyboard.addEventListener("click", function() {
       state.audioContext.resume().then(() => {
@@ -78,6 +83,10 @@ window.addEventListener("load", function() {
    });
 
    document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
+
+   window.addEventListener('resize', function() {
+      resizeVisualizerCanvas(keyboardElement, visualizer);
+   }, true);
 });
 
 function decideBasedOnFileExtension(fileInput) {
