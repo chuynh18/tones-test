@@ -29,6 +29,7 @@ td {
 
 .visualizerAnimation {
     animation-name: visualizer;
+    animation-timing-function: linear;
     animation-duration: 6s;
 }
 
