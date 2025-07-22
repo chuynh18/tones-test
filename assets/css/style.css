@@ -21,3 +21,22 @@ td {
 #damper {
     width: 100%;
 }
+
+@keyframes visualizer {
+    0% {}
+    100% {transform: translateY(-600%);}
+}
+
+.visualizerAnimation {
+    animation-name: visualizer;
+    animation-duration: 3s;
+}
+
+#visualizer {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+#kb {
+    margin-top: 0;
+    padding-top: 0;
+}

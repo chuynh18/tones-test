@@ -9,7 +9,7 @@ import {
    stopMidiPlaying,
    userMovesSeekBar
 } from "./piano/pianoPlayer.js";
-import { resizeVisualizerCanvas } from "./visualizer/visualizer.js";
+import { setReferencesToElements, resizeVisualizerCanvas } from "./visualizer/visualizer.js";
 
 window.addEventListener("load", function() {
    const keyboardElement = document.getElementById("kb");
@@ -17,6 +17,7 @@ window.addEventListener("load", function() {
    const visualizer = document.getElementById("visualizer");
    state.rects = keyboard.getElementsByTagName("rect");
 
+   setReferencesToElements(keyboardElement, visualizer);
    resizeVisualizerCanvas(keyboardElement, visualizer);
 
    keyboard.addEventListener("click", function() {
@@ -85,7 +86,7 @@ window.addEventListener("load", function() {
    document.getElementById("seekBar").addEventListener("change", userMovesSeekBar);
 
    window.addEventListener('resize', function() {
-      resizeVisualizerCanvas(keyboardElement, visualizer);
+      resizeVisualizerCanvas();
    }, true);
 });
 
