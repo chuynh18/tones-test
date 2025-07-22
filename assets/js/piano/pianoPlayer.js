@@ -1,4 +1,5 @@
 import { CONSTANTS, colors, state, keyReference } from "./resources.js"
+import { drawRect } from "../visualizer/visualizer.js";
 
 export function startPlayer(startIndex = 0) {
    if (state.midi) {
@@ -71,8 +72,9 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
 function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
    const volume = velocity / 127; // maximum MIDI velocity is 7 bit number
    startPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, volume);
+   drawRect(state.rects[keyReference[pianoKeyNumber]], duration, color);
    setTimeout(function() {
-      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]])
+      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]]);
    }, duration);
 }
 
