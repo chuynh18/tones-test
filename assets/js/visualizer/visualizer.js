@@ -1,7 +1,7 @@
 const defaultKeyboardWidth = 1196.5;
 let visualizerWidth;
 let visualizerHeight;
-let onscreenDurationMillis = 1000; 
+let onscreenDurationMillis = 1600; 
 let keyboard; // holds keyboard SVG element
 let visualizer; // holds visualizer SVG element
 
@@ -12,7 +12,7 @@ export function setReferencesToElements(keyboardElement, visualizerElement) {
 
 export function resizeVisualizerCanvas() {
     visualizerWidth = keyboard.clientWidth;
-    visualizerHeight = 2 * keyboard.clientHeight;
+    visualizerHeight = 3 * keyboard.clientHeight;
     visualizer.setAttribute("width", visualizerWidth);
     visualizer.setAttribute("height", visualizerHeight);
 }

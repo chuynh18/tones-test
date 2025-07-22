@@ -18,7 +18,6 @@ window.addEventListener("load", function() {
    state.rects = keyboard.getElementsByTagName("rect");
 
    setReferencesToElements(keyboardElement, visualizer);
-   resizeVisualizerCanvas(keyboardElement, visualizer);
 
    keyboard.addEventListener("click", function() {
       state.audioContext.resume().then(() => {
@@ -88,6 +87,8 @@ window.addEventListener("load", function() {
    window.addEventListener('resize', function() {
       resizeVisualizerCanvas();
    }, true);
+
+   resizeVisualizerCanvas(keyboardElement, visualizer);
 });
 
 function decideBasedOnFileExtension(fileInput) {
