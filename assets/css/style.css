@@ -29,7 +29,7 @@ td {
 
 .visualizerAnimation {
     animation-name: visualizer;
-    animation-duration: 3s;
+    animation-duration: 6s;
 }
 
 #visualizer {

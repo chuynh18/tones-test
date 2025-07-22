@@ -1,7 +1,7 @@
 const defaultKeyboardWidth = 1196.5;
 let visualizerWidth;
 let visualizerHeight;
-let onscreenDurationMillis = 400; 
+let onscreenDurationMillis = 1000; 
 let keyboard; // holds keyboard SVG element
 let visualizer; // holds visualizer SVG element
 
@@ -43,5 +43,5 @@ export function drawRect(svgKey, noteDuration, noteColor) {
 
     setTimeout(function() {
         newRect.parentNode.removeChild(newRect);
-    }, 6000);
+    }, 10000);
 }
