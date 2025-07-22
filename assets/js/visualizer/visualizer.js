@@ -33,8 +33,10 @@ export function drawRect(svgKey, noteDuration, noteColor) {
 
     const newRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
     newRect.style.fill = noteColor;
+    newRect.style.strokeWidth = "1px";
+    newRect.style.stroke = "black";
     newRect.setAttribute("x", xPos)
-    newRect.setAttribute("y", yPos);
+    newRect.setAttribute("y", yPos + 1); // +1 to cover for the stroke width being 1px
     newRect.setAttribute("width", rectWidth);
     newRect.setAttribute("height", rectHeight);
     newRect.setAttribute("position", "relative");
