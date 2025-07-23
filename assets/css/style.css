@@ -34,12 +34,10 @@ td {
 }
 
 #visualizer {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    vertical-align: bottom;
 }
 #kb {
-    margin-top: 0;
-    padding-top: 0;
+    vertical-align: top;
 }
 
 #titleText {
