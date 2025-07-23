@@ -55,14 +55,14 @@ window.addEventListener("load", function() {
       state.rects[i].addEventListener("mouseenter", function() {
          if (state.mouseDown) {
             startPlaying(i, state.rects[i]);
-            console.log("pointer enter", i);
+            console.log("mouse enter", i);
          }
       });
 
       state.rects[i].addEventListener("mouseleave", function() {
          if (state.mouseDown) {
             stopPlaying(i, state.rects[i]);
-            console.log("pointer leave", i);
+            console.log("mouse leave", i);
          }
       });
    
