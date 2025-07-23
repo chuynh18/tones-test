@@ -63,6 +63,7 @@ window.addEventListener("load", function() {
       });
    
       state.bufferSources[i] = []; // place empty arrays into bufferSources array
+      state.visualizerRects[i] = []; // same as above
    }
 
    document.getElementById("damper").addEventListener("click", togglePedal);

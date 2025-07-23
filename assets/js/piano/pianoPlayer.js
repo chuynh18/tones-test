@@ -73,13 +73,12 @@ function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
    const volume = velocity / 127; // maximum MIDI velocity is 7 bit number
    startPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, volume, true);
    const rect = drawRect(state.rects[keyReference[pianoKeyNumber]], duration, color);
+   setTimeout(function() {;
+      rect.parentNode.removeChild(rect);
+   }, duration + 2000);
    setTimeout(function() {
       stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, true);
    }, duration);
-   setTimeout(function() {
-      console.log(rect);
-      rect.parentNode.removeChild(rect);
-   }, duration + 2000);
 }
 
 /**
@@ -122,7 +121,7 @@ export function startPlaying(i, key, color = "red", gain = 1, skipDrawing = fals
 
    if (! skipDrawing) {
       const rect = drawRect(state.rects[i], 10000, color);
-      state.visualizerRects.push({
+      state.visualizerRects[i].push({
          rect: rect,
          createdAt: Date.now()
       });
@@ -140,7 +139,7 @@ export function stopPlaying(i, key, color = "red", skipDestroy = false) {
    state.currentlyHeldDownKeys[i] = false;
    
    if (! skipDestroy) {
-      const rectObj = state.visualizerRects.shift();
+      const rectObj = state.visualizerRects[i].shift();
       const rect = rectObj.rect;
       const duration = Date.now() - rectObj.createdAt;
 
