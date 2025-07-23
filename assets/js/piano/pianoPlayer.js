@@ -166,6 +166,7 @@ export function destroyRect(rectObj){
    }, duration + 2000);
 
    rectObj.rect.parentNode.removeChild(rectObj.rect);
+   console.log(state.visualizerRects);
 }
 
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
