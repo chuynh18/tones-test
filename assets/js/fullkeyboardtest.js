@@ -38,6 +38,7 @@ window.addEventListener("load", function() {
          if (visualizerRect.length > 0) {
             visualizerRect.forEach(rect => destroyRect(rect));
          }
+         visualizerRect.length = 0;
       });
    });
 
