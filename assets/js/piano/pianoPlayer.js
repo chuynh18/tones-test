@@ -157,16 +157,18 @@ export function stopPlaying(i, key, color = "red", skipDestroy = false) {
 }
 
 export function destroyRect(rectObj){
-   const duration = Date.now() - rectObj.createdAt;
+   if (rectObj) {
+      const duration = Date.now() - rectObj.createdAt;
 
-   const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / 2000))});
+      const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / 2000))});
+      
+      setTimeout(function() {
+         replacementRect.parentNode.removeChild(replacementRect);
+      }, duration + 2000);
+
+      rectObj.rect.parentNode.removeChild(rectObj.rect);
+   }
    
-   setTimeout(function() {
-      replacementRect.parentNode.removeChild(replacementRect);
-   }, duration + 2000);
-
-   rectObj.rect.parentNode.removeChild(rectObj.rect);
-   console.log(state.visualizerRects);
 }
 
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
