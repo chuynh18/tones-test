@@ -137,6 +137,8 @@ export function stopPlaying(i, key, color = "red", skipDestroy = false) {
    key.style.fill = key.dataset.fill;
    key.setAttribute("class", "unpressed");
    state.currentlyHeldDownKeys[i] = false;
+
+   console.log(state.visualizerRects);
    
    if (! skipDestroy) {
       const rectObj = state.visualizerRects[i].shift();
