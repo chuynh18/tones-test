@@ -7,7 +7,8 @@ import {
    setPedal,
    pausePlaying,
    stopMidiPlaying,
-   userMovesSeekBar
+   userMovesSeekBar,
+   destroyRect
 } from "./piano/pianoPlayer.js";
 import { setReferencesToElements, resizeVisualizerCanvas } from "./visualizer/visualizer.js";
 
@@ -25,12 +26,19 @@ window.addEventListener("load", function() {
       });
    }, {once: true});
 
-   window.addEventListener("pointerdown", function() {
+   keyboard.addEventListener("pointerdown", function() {
       state.mouseDown = true;
    });
 
-   window.addEventListener("pointerup", function() {
+   keyboard.addEventListener("pointerup", function() {
       state.mouseDown = false;
+      console.log("keyboard pointer up");
+
+      state.visualizerRects.forEach(visualizerRect => {
+         if (visualizerRect.length > 0) {
+            visualizerRect.forEach(rect => destroyRect(rect));
+         }
+      });
    });
 
    // attach event listeners to each key of the piano

@@ -123,7 +123,9 @@ export function startPlaying(i, key, color = "red", gain = 1, skipDrawing = fals
       const rect = drawRect(state.rects[i], 10000, color);
       state.visualizerRects[i].push({
          rect: rect,
-         createdAt: Date.now()
+         createdAt: Date.now(),
+         i: i,
+         color: color
       });
    }
 }
@@ -137,21 +139,10 @@ export function stopPlaying(i, key, color = "red", skipDestroy = false) {
    key.style.fill = key.dataset.fill;
    key.setAttribute("class", "unpressed");
    state.currentlyHeldDownKeys[i] = false;
-
-   // console.log(state.visualizerRects);
    
    if (! skipDestroy) {
       const rectObj = state.visualizerRects[i].shift();
-      const rect = rectObj.rect;
-      const duration = Date.now() - rectObj.createdAt;
-
-      const replacementRect = drawRect(state.rects[i], duration, color, {yPos: visualizerHeight - (visualizerHeight * (duration / 2000))});
-      
-      setTimeout(function() {
-         replacementRect.parentNode.removeChild(replacementRect);
-      }, duration + 2000);
-
-      rect.parentNode.removeChild(rect);
+      destroyRect(rectObj);
    }
    
    if (!state.pedal) {
@@ -163,6 +154,18 @@ export function stopPlaying(i, key, color = "red", skipDestroy = false) {
       const noteBufferSource = state.bufferSources[i].shift();
       noteStop(note, noteBufferSource);
    }
+}
+
+export function destroyRect(rectObj){
+   const duration = Date.now() - rectObj.createdAt;
+
+   const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / 2000))});
+   
+   setTimeout(function() {
+      replacementRect.parentNode.removeChild(replacementRect);
+   }, duration + 2000);
+
+   rectObj.rect.parentNode.removeChild(rectObj.rect);
 }
 
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
