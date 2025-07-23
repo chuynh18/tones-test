@@ -174,7 +174,9 @@ export function destroyRect(rectObj){
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {
    try {
          note.gain.gain.setTargetAtTime(endingVolume, state.audioContext.currentTime, noteFadeDuration);
-         noteBufferSource.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
+         if (noteBufferSource) {
+            noteBufferSource.stop(state.audioContext.currentTime + noteFadeDuration + 0.1);
+         }
    } catch (e) {
       console.log(e);
    }
