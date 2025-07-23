@@ -53,7 +53,10 @@ window.addEventListener("load", function() {
       });
 
       state.rects[i].addEventListener("pointercancel", function() {
-         console.log("pointer cancel");
+         if (state.mouseDown) {
+            stopPlaying(i, state.rects[i]);
+            console.log("pointer cancel", i);
+         }
       });
 
       state.rects[i].addEventListener("pointerenter", function() {
