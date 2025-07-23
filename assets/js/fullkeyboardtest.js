@@ -52,6 +52,10 @@ window.addEventListener("load", function() {
          console.log("pointer up", i);
       });
 
+      state.rects[i].addEventListener("pointercancel", function() {
+         console.log("pointer cancel");
+      });
+
       state.rects[i].addEventListener("mouseenter", function() {
          if (state.mouseDown) {
             startPlaying(i, state.rects[i]);
