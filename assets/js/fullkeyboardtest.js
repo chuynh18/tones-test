@@ -25,11 +25,11 @@ window.addEventListener("load", function() {
       });
    }, {once: true});
 
-   keyboard.addEventListener("pointerdown", function() {
+   window.addEventListener("pointerdown", function() {
       state.mouseDown = true;
    });
 
-   keyboard.addEventListener("pointerup", function() {
+   window.addEventListener("pointerup", function() {
       state.mouseDown = false;
    });
 
@@ -56,17 +56,17 @@ window.addEventListener("load", function() {
          console.log("pointer cancel");
       });
 
-      state.rects[i].addEventListener("mouseenter", function() {
+      state.rects[i].addEventListener("pointerenter", function() {
          if (state.mouseDown) {
             startPlaying(i, state.rects[i]);
-            console.log("mouse enter", i);
+            console.log("pointer enter", i);
          }
       });
 
-      state.rects[i].addEventListener("mouseleave", function() {
+      state.rects[i].addEventListener("pointerleave", function() {
          if (state.mouseDown) {
             stopPlaying(i, state.rects[i]);
-            console.log("mouse leave", i);
+            console.log("pointer leave", i);
          }
       });
    
