@@ -1,7 +1,7 @@
 const defaultKeyboardWidth = 1196.5;
 let visualizerWidth;
-let visualizerHeight;
-let onscreenDurationMillis = 1600; 
+export let visualizerHeight;
+let onscreenDurationMillis = 2000; 
 let keyboard; // holds keyboard SVG element
 let visualizer; // holds visualizer SVG element
 
@@ -23,13 +23,16 @@ export function resizeVisualizerCanvas() {
  * @param {Number} noteDuration how long the note is going to be played 
  * @param {String} noteColor the color of the note
  */
-export function drawRect(svgKey, noteDuration, noteColor) {
+export function drawRect(svgKey, noteDuration, noteColor, override) {
     const xPos = Number(svgKey.getAttribute("x")) * visualizerWidth/defaultKeyboardWidth;
-    const yPos = visualizerHeight;
+    let yPos = visualizerHeight;
     const rectWidth = Number(svgKey.getAttribute("width")) * visualizerWidth/defaultKeyboardWidth;
     const velocity = visualizerHeight/onscreenDurationMillis; // pixels per millisecond
-    const rectHeight = velocity * noteDuration; // velocity * time = distance
-    console.log("svgKey #", svgKey.getAttribute("id"), "xpos", xPos);
+    let rectHeight = velocity * noteDuration; // velocity * time = distance
+
+    if (override) {
+        yPos = override.yPos;
+    }
 
     const newRect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
     newRect.style.fill = noteColor;
@@ -43,7 +46,5 @@ export function drawRect(svgKey, noteDuration, noteColor) {
     newRect.classList.add("visualizerAnimation");
     visualizer.appendChild(newRect);
 
-    setTimeout(function() {
-        newRect.parentNode.removeChild(newRect);
-    }, 10000);
+    return newRect;
 }

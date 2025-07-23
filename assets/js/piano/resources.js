@@ -19,7 +19,8 @@ export const state = {
    volume: 1, // volume multiplier
    longestTrackIndex: 0,
    midi: undefined, // object that contains representation of music (originally MIDI deserialized by midijs)
-   currentlyHeldDownKeys: []
+   currentlyHeldDownKeys: [], // track keys being held down so damper pedal does not end their sound
+   visualizerRects: [] // rects drawn when piano is being played manually so we can destroy them when a note ends
 };
 
 // these are HSL values... except we won't use L

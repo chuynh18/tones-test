@@ -1,5 +1,5 @@
 import { CONSTANTS, colors, state, keyReference } from "./resources.js"
-import { drawRect } from "../visualizer/visualizer.js";
+import { drawRect, visualizerHeight } from "../visualizer/visualizer.js";
 
 export function startPlayer(startIndex = 0) {
    if (state.midi) {
@@ -71,11 +71,15 @@ function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
 
 function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
    const volume = velocity / 127; // maximum MIDI velocity is 7 bit number
-   startPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, volume);
-   drawRect(state.rects[keyReference[pianoKeyNumber]], duration, color);
+   startPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, volume, true);
+   const rect = drawRect(state.rects[keyReference[pianoKeyNumber]], duration, color);
    setTimeout(function() {
-      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]]);
+      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, true);
    }, duration);
+   setTimeout(function() {
+      console.log(rect);
+      rect.parentNode.removeChild(rect);
+   }, duration + 2000);
 }
 
 /**
@@ -85,7 +89,7 @@ function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
  * @param {String} color the color of the key when it is being played, defaults to "red"
  * @param {Number} gain how loud the note should be
  */
-export function startPlaying(i, key, color = "red", gain = 1) {
+export function startPlaying(i, key, color = "red", gain = 1, skipDrawing = false) {
    key.style.fill = color;
    key.setAttribute("class", "pressed");
 
@@ -115,6 +119,14 @@ export function startPlaying(i, key, color = "red", gain = 1) {
    note.gain.gain.setTargetAtTime(gain * state.volume, state.audioContext.currentTime, 0.005);
 
    noteToBePlayed.start(0);
+
+   if (! skipDrawing) {
+      const rect = drawRect(state.rects[i], 10000, color);
+      state.visualizerRects.push({
+         rect: rect,
+         createdAt: Date.now()
+      });
+   }
 }
 
 /**
@@ -122,10 +134,25 @@ export function startPlaying(i, key, color = "red", gain = 1) {
  * @param {Number} i the note number to be played (# of the key on the piano, 1 through 88)
  * @param {SVGElement} key the key SVG rect
  */
-export function stopPlaying(i, key) {
+export function stopPlaying(i, key, color = "red", skipDestroy = false) {
    key.style.fill = key.dataset.fill;
    key.setAttribute("class", "unpressed");
    state.currentlyHeldDownKeys[i] = false;
+   
+   if (! skipDestroy) {
+      const rectObj = state.visualizerRects.shift();
+      const rect = rectObj.rect;
+      const duration = Date.now() - rectObj.createdAt;
+
+      const replacementRect = drawRect(state.rects[i], duration, color, {yPos: visualizerHeight - (visualizerHeight * (duration / 2000))});
+      
+      setTimeout(function() {
+         replacementRect.parentNode.removeChild(replacementRect);
+      }, duration + 2000);
+
+      rect.parentNode.removeChild(rect);
+   }
+   
    if (!state.pedal) {
       const note = state.audio[i];
       // This is mutating the array from the front. generally, though, the array length should be 0 or 1, so there
@@ -135,7 +162,6 @@ export function stopPlaying(i, key) {
       const noteBufferSource = state.bufferSources[i].shift();
       noteStop(note, noteBufferSource);
    }
-   
 }
 
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {

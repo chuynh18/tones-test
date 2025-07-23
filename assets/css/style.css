@@ -24,13 +24,13 @@ td {
 
 @keyframes visualizer {
     0% {}
-    100% {transform: translateY(-600%);}
+    100% {transform: translateY(-1000%);}
 }
 
 .visualizerAnimation {
     animation-name: visualizer;
     animation-timing-function: linear;
-    animation-duration: 10s;
+    animation-duration: 20s;
 }
 
 #visualizer {
