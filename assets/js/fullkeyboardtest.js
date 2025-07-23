@@ -44,25 +44,25 @@ window.addEventListener("load", function() {
 
       state.rects[i].addEventListener("pointerdown", function() {
          startPlaying(i, state.rects[i]);
-         console.log("pointer down");
+         console.log("pointer down", i);
       });
 
       state.rects[i].addEventListener("pointerup", function() {
          stopPlaying(i, state.rects[i]);
-         console.log("pointer up");
+         console.log("pointer up", i);
       });
 
       state.rects[i].addEventListener("pointerenter", function() {
          if (state.mouseDown) {
             startPlaying(i, state.rects[i]);
-            console.log("pointer enter");
+            console.log("pointer enter", i);
          }
       });
 
       state.rects[i].addEventListener("pointerleave", function() {
          if (state.mouseDown) {
             stopPlaying(i, state.rects[i]);
-            console.log("pointer leave");
+            console.log("pointer leave", i);
          }
       });
    
