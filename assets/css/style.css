@@ -35,6 +35,7 @@ td {
 
 #visualizer {
     vertical-align: bottom;
+    height: 50vh;
 }
 #kb {
     vertical-align: top;

@@ -1,5 +1,5 @@
 import { CONSTANTS, colors, state, keyReference } from "./resources.js"
-import { drawRect, visualizerHeight } from "../visualizer/visualizer.js";
+import { drawRect, visualizerHeight, onscreenDurationMillis } from "../visualizer/visualizer.js";
 
 export function startPlayer(startIndex = 0) {
    if (state.midi) {
@@ -75,7 +75,7 @@ function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
    const rect = drawRect(state.rects[keyReference[pianoKeyNumber]], duration, color);
    setTimeout(function() {;
       rect.parentNode.removeChild(rect);
-   }, duration + 2000);
+   }, duration + onscreenDurationMillis);
    setTimeout(function() {
       stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, true);
    }, duration);
@@ -160,11 +160,11 @@ export function destroyRect(rectObj){
    if (rectObj) {
       const duration = Date.now() - rectObj.createdAt;
 
-      const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / 2000))});
+      const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / onscreenDurationMillis))});
       
       setTimeout(function() {
          replacementRect.parentNode.removeChild(replacementRect);
-      }, duration + 2000);
+      }, duration + onscreenDurationMillis);
 
       rectObj.rect.parentNode.removeChild(rectObj.rect);
    }
