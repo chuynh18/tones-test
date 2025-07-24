@@ -1,3 +1,5 @@
+import { state } from "../piano/resources.js";
+
 const defaultKeyboardWidth = 1196.5;
 let visualizerWidth;
 export let visualizerHeight; // is 50vh, variable is set by getting actual height of element
@@ -65,4 +67,18 @@ function modifyAnimationDuration(duration) {
             rule.style.animationDuration = duration;
         }
     }
+}
+
+export function destroyRect(rectObj){
+   if (rectObj) {
+      const duration = Date.now() - rectObj.createdAt;
+
+      const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / onscreenDurationMillis))});
+      
+      setTimeout(function() {
+         replacementRect.parentNode.removeChild(replacementRect);
+      }, duration + onscreenDurationMillis);
+
+      rectObj.rect.parentNode.removeChild(rectObj.rect);
+   }
 }

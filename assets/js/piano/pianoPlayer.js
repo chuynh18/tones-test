@@ -1,5 +1,5 @@
 import { CONSTANTS, colors, state, keyReference } from "./resources.js"
-import { drawRect, visualizerHeight, onscreenDurationMillis } from "../visualizer/visualizer.js";
+import { drawRect, onscreenDurationMillis, destroyRect } from "../visualizer/visualizer.js";
 
 export function startPlayer(startIndex = 0) {
    if (state.midi) {
@@ -154,21 +154,6 @@ export function stopPlaying(i, key, color = "red", skipDestroy = false) {
       const noteBufferSource = state.bufferSources[i].shift();
       noteStop(note, noteBufferSource);
    }
-}
-
-export function destroyRect(rectObj){
-   if (rectObj) {
-      const duration = Date.now() - rectObj.createdAt;
-
-      const replacementRect = drawRect(state.rects[rectObj.i], duration, rectObj.color, {yPos: visualizerHeight - (visualizerHeight * (duration / onscreenDurationMillis))});
-      
-      setTimeout(function() {
-         replacementRect.parentNode.removeChild(replacementRect);
-      }, duration + onscreenDurationMillis);
-
-      rectObj.rect.parentNode.removeChild(rectObj.rect);
-   }
-   
 }
 
 function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration = CONSTANTS.noteFade) {

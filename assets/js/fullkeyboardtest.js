@@ -7,10 +7,9 @@ import {
    setPedal,
    pausePlaying,
    stopMidiPlaying,
-   userMovesSeekBar,
-   destroyRect
+   userMovesSeekBar
 } from "./piano/pianoPlayer.js";
-import { setReferencesToElements, resizeVisualizerCanvas } from "./visualizer/visualizer.js";
+import { setReferencesToElements, resizeVisualizerCanvas, destroyRect } from "./visualizer/visualizer.js";
 
 window.addEventListener("load", function() {
    const keyboardElement = document.getElementById("kb");
