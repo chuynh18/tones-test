@@ -9,7 +9,7 @@ import {
    stopMidiPlaying,
    userMovesSeekBar
 } from "./piano/pianoPlayer.js";
-import { setReferencesToElements, resizeVisualizerCanvas, destroyRect } from "./visualizer/visualizer.js";
+import { setReferencesToElements, resizeVisualizerCanvas, destroyAndRedrawRect } from "./visualizer/visualizer.js";
 
 window.addEventListener("load", function() {
    const keyboardElement = document.getElementById("kb");
@@ -32,10 +32,12 @@ window.addEventListener("load", function() {
    keyboard.addEventListener("pointerup", function() {
       state.mouseDown = false;
 
-      // what a disater
+      // what a disater. this hack exists because I don't fully understand how mobile browsers handle multitouch
+      // What I'm seeing is that when you multitouch the keyboard, it properly generates the pointerdown events but not
+      // all the corresponding pointerup events. This means that notes don't get the signal to stop.
       state.visualizerRects.forEach(visualizerRect => {
          if (visualizerRect.length > 0) {
-            visualizerRect.forEach(rect => destroyRect(rect));
+            visualizerRect.forEach(rect => destroyAndRedrawRect(rect));
          }
          visualizerRect.length = 0;
       });

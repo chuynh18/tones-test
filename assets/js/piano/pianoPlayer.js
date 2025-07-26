@@ -1,5 +1,5 @@
 import { CONSTANTS, colors, state, keyReference } from "./resources.js"
-import { drawRect, onscreenDurationMillis, destroyRect } from "../visualizer/visualizer.js";
+import { drawRect, onscreenDurationMillis, destroyAndRedrawRect } from "../visualizer/visualizer.js";
 
 export function startPlayer(startIndex = 0) {
    if (state.midi) {
@@ -77,7 +77,7 @@ function playNoteForDuration(pianoKeyNumber, duration, color, velocity) {
       rect.parentNode.removeChild(rect);
    }, duration + onscreenDurationMillis);
    setTimeout(function() {
-      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], color, true);
+      stopPlaying(keyReference[pianoKeyNumber], state.rects[keyReference[pianoKeyNumber]], true);
    }, duration);
 }
 
@@ -135,14 +135,14 @@ export function startPlaying(i, key, color = "red", gain = 1, skipDrawing = fals
  * @param {Number} i the note number to be played (# of the key on the piano, 1 through 88)
  * @param {SVGElement} key the key SVG rect
  */
-export function stopPlaying(i, key, color = "red", skipDestroy = false) {
+export function stopPlaying(i, key, skipDestroy = false) {
    key.style.fill = key.dataset.fill;
    key.setAttribute("class", "unpressed");
    state.currentlyHeldDownKeys[i] = false;
    
    if (! skipDestroy) {
       const rectObj = state.visualizerRects[i].shift();
-      destroyRect(rectObj);
+      destroyAndRedrawRect(rectObj);
    }
    
    if (!state.pedal) {

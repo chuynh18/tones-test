@@ -69,7 +69,7 @@ function modifyAnimationDuration(duration) {
     }
 }
 
-export function destroyRect(rectObj){
+export function destroyAndRedrawRect(rectObj){
    if (rectObj) {
       const duration = Date.now() - rectObj.createdAt;
 
