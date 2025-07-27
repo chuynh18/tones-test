@@ -205,14 +205,20 @@ function clearMusicLibrarySelector() {
 
 function retrieveMidi(file, callback) {
    if (! file) return;
+
+   if (state.cache[file]) {
+      state.midi = state.cache[file];
+      return;
+   }
+
    const url = `assets/audio/midi/${file}.mid`;
    const req = new XMLHttpRequest;
    req.open("GET", url, true);
    req.responseType = 'arraybuffer';
 
    req.onload = function() {
-      state.midi = parseMidiArrayBuffer(req.response);
-      console.log(state.midi);
+      state.cache[file] = parseMidiArrayBuffer(req.response);
+      state.midi = state.cache[file];
       if (typeof callback === "function") callback();
    }
 
