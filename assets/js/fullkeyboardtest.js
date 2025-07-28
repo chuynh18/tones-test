@@ -4,7 +4,7 @@ import {
    startPlayer,
    startPlaying,
    stopPlaying,
-   setPedal,
+   setDamper,
    pausePlaying,
    stopMidiPlaying,
    userMovesSeekBar
@@ -167,7 +167,7 @@ async function getMidi(fileSelector) {
 }
 
 function togglePedal() {
-   state.pedal ? setPedal(false) : setPedal(true);
+   state.pedal ? setDamper(false) : setDamper(true);
 }
 
 // plays currently selected MIDI which is stored in state.midi (see startPlayer function)

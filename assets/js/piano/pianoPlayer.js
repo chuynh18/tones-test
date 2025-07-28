@@ -20,7 +20,7 @@ export function startPlayer(startIndex = 0) {
 
       latestEndTime = (1000 * latestEndTime / ticksPerSecond) - seekOffset; // convert ticks to milliseconds
 
-      setPedal(false); // reset pedal back to off in case playback stopped before the damper pedal was reset
+      setDamper(false); // reset pedal back to off in case playback stopped before the damper pedal was reset
       updateSeekBarUI(playableTracks);
 
       // sync object for seeking across multi-track MIDI files
@@ -95,6 +95,8 @@ export function startPlaying(i, key, color = "red", gain = 1, skipDrawing = fals
    const note = state.audio[i];
    note.currentTime = state.audioContext.currentTime;
    state.currentlyHeldDownKeys[i] = true;
+   let unaCordaGain;
+   state.unaCorda ? unaCordaGain = 0.8 : unaCordaGain = 1;
    
    // I was thinking it's inefficient to create a BufferSource every time a note is played, but the MDN docs say
    // this is the right way to do it. They are very inexpensive to create and will be garbage collected, and I am
@@ -115,7 +117,7 @@ export function startPlaying(i, key, color = "red", gain = 1, skipDrawing = fals
    note.gain = state.audioContext.createGain();
    noteToBePlayed.connect(note.gain);
    note.gain.connect(state.audioContext.destination);
-   note.gain.gain.setTargetAtTime(gain * state.volume, state.audioContext.currentTime, 0.005);
+   note.gain.gain.setTargetAtTime(gain * state.volume * unaCordaGain, state.audioContext.currentTime, 0.005);
 
    noteToBePlayed.start(0);
 
@@ -167,7 +169,7 @@ function noteStop(note, noteBufferSource, endingVolume = 0.1, noteFadeDuration =
    }
 }
 
-export function setPedal(pedalState) {
+export function setDamper(pedalState) {
    const damperButton = document.getElementById("damper");
    state.pedal = pedalState;
 
@@ -188,6 +190,10 @@ export function setPedal(pedalState) {
    }
 }
 
+function setUnaCorda(pedalState) {
+   state.unaCorda = pedalState;
+}
+
 export function pausePlaying(updateUI = true) {
    state.player.forEach(queuedNote => clearTimeout(queuedNote));
    state.player.length = 0;
@@ -202,18 +208,22 @@ export function stopMidiPlaying(updateUI = true) {
 function handleControlChangeEvent(event, startMillis, i) {
    switch(event.controlChangeType) {
       case "damper pedal toggle":
-         (function(i){state.player.push(setTimeout(function() {
-            (event.controlChangeValue > 63) ? setPedal(true) : setPedal(false); 
-            if (i > state.midiIndex) state.midiIndex = i;
-            updateSeekBarUI();
-         }, startMillis));})(i);
+         pedal(event, startMillis, i, setDamper);
          break;
       case "una corda toggle":
-      
+         pedal(event, startMillis, i, setUnaCorda);
          break;
       default:
          console.log("Unhandled control change event:", event);
    }
+}
+
+function pedal(event, startMillis, i, pedalFunction) {
+   (function(i){state.player.push(setTimeout(function() {
+      (event.controlChangeValue > 63) ? pedalFunction(true) : pedalFunction(false); 
+      if (i > state.midiIndex) state.midiIndex = i;
+      updateSeekBarUI();
+   }, startMillis));})(i);
 }
 
 function updateSeekBarUI(playableTracks) {
