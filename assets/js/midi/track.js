@@ -105,17 +105,22 @@ function createMessage(track, messageType, time, dataIndexStart, dataIndexEnd) {
             break;
         default:
             midiEvent.data = data;
-
     }
 
     return midiEvent;
 }
 
 function handleControlChangeMessage(data) {
-    return {
-        controlChangeType: controlChangeMessages[data[0]].type,
-        value: data[1]
-    };
+    if (controlChangeMessages[data[0]]) {
+        return {
+            controlChangeType: controlChangeMessages[data[0]].type,
+            value: data[1]
+        };
+    } else {
+        console.log("Unhandled control change message. Raw data:");
+        console.log(data);
+    }
+    
 }
 
 function resolveNote(data) {

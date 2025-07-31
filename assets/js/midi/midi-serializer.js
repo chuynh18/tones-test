@@ -31,7 +31,7 @@ export default function parseMidiArrayBuffer(buffer) {
     };
 
     // ugh, ugly
-    midi.header.ticksPerSecond = midi.header.division*midi.tracks[0].track[81].data.musicTempo/60;
+    midi.header.ticksPerSecond = midi.header.division * midi.tracks[0].track[81].data.musicTempo / 60;
 
     return midi;
 }
