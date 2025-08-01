@@ -114,13 +114,19 @@ function handleControlChangeMessage(data) {
     if (controlChangeMessages[data[0]]) {
         return {
             controlChangeType: controlChangeMessages[data[0]].type,
+            rawControlChangeValue: data[0],
             value: data[1]
         };
-    } else {
-        console.log("Unhandled control change message. Raw data:");
-        console.log(data);
     }
+
+    console.log("Unhandled control change message. Raw data:");
+    console.log(data);
     
+    return {
+        controlChangeType: "unhandled control change message",
+        rawControlChangeValue: data[0],
+        value: data[1]
+    };
 }
 
 function resolveNote(data) {
@@ -169,6 +175,10 @@ export function postprocess(parsedTrack) {
         }
     }
 
+    // this means the track had note start events but no corresponding note end events
+    // while this may not be compliant with the MIDI spec, I don't care to play neverending notes
+    if (postprocessed.length === 0) return {};
+
     let lastNote;
 
     for (let i = postprocessed.length - 1; i > 0; i--) {
@@ -177,6 +187,10 @@ export function postprocess(parsedTrack) {
             break;
         }
     }
+
+    // this means that the track contains no musical data, just system messages, controal change events, etc.
+    // While this isn't a compliant way to handle the track, discarding the track is easier
+    if (!lastNote) return {};
 
     let lastNoteDuration = 0;
     if (lastNote.duration) {

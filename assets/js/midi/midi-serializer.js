@@ -76,7 +76,8 @@ function parseTracks(dataView, header) {
         if (midiConstants[magicString] === midiConstants.MTrk) {
             const trackLength = dataView.getUint32(i + midiConstants.magicStringSize);
             const startingBytes = i + midiConstants.trackHeaderAndLengthSize;
-            const rawTrack = parseDataViewSegment(dataView, startingBytes, startingBytes + trackLength);
+            const offset = startingBytes + trackLength < dataView.byteLength ? startingBytes + trackLength : dataView.byteLength;
+            const rawTrack = parseDataViewSegment(dataView, startingBytes, offset);
             const parsedTrack = parseTrack(rawTrack, tracks.length, midiFormatType);
 
             tracks.push({

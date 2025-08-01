@@ -30,7 +30,6 @@ export function startPlayer(startIndex = 0) {
          if (startIndex > 0) {
             seekOffset = 1000 * track.playableMusic[sync[trackNum].startIndex].startTime / ticksPerSecond; // convert to ms
             if (trackNum === state.longestTrackIndex) latestEndTime -= seekOffset;
-
          }
 
          for (let i = sync[trackNum].startIndex; i < track.playableMusic.length; i++) {
@@ -265,8 +264,15 @@ function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLon
 
    for (let i = 0; i < playableTracks.length; i++) {
       if (i === longestTrackIndex) continue;
-
-      seek[i] = searchForCorrespondingStartIndex(playableTracks[i], startTimeOfLongestTrack);
+      const seekObject = searchForCorrespondingStartIndex(playableTracks[i], startTimeOfLongestTrack);
+      seek[i] = seekObject;
+      if (! seekObject) {
+         seek[i] = {
+            startIndex: playableTracks[i].playableMusic.length - 1,
+            offset: 0,
+            startTime: Infinity
+         };
+      }
    }
 
    return seek;
@@ -277,28 +283,60 @@ function syncSeekAcrossTracks(playableTracks, longestTrackIndex, startIndexOfLon
  * @param {Object} track a playable track (deserialized by midijs from midi file)
  * @param {Number} startTimeOfLongestTrack MIDI start time of a MIDI event
  */
-function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, left, right) {
-   function mean(...args) { // arithmetic mean, uses arguments object so it is variadic even though we will only ever feed 2 args
-      return args.reduce((accumulator, currentValue) => accumulator + currentValue) / args.length;
-   }
+function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack) {
+   let previousIndex = 0;
+   let index = 0;
+   let lastStartTime = 0;
+   
+   for (let i = 0; i < track.playableMusic.length; i++) {
+      if (track.playableMusic[i].startTime > lastStartTime) {
+         lastStartTime = track.playableMusic[i].startTime;
+         previousIndex = index;
+         index = i;
+      }
 
-   if (!left) left = 0;
-   if (!right) right = track.playableMusic.length - 1;
-
-   let middle = Math.floor(mean(left, right));
-
-   if (track.playableMusic[middle].startTime > startTimeOfLongestTrack && track.playableMusic[middle - 1].startTime <= startTimeOfLongestTrack) {
-      return {
-         startIndex: middle - 1,
-         offset: startTimeOfLongestTrack - track.playableMusic[middle - 1].startTime,
-         startTime: track.playableMusic[middle - 1].startTime
-      };
-   } else if (track.playableMusic[middle].startTime > startTimeOfLongestTrack) {
-      return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, 0, middle);
-   } else {
-      return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, middle, right);
+      if (track.playableMusic[i].startTime > startTimeOfLongestTrack) {
+         return {
+            startIndex: previousIndex,
+            offset: startTimeOfLongestTrack - track.playableMusic[previousIndex].startTime,
+            startTime: track.playableMusic[previousIndex].startTime
+         };
+      }
    }
 }
+
+// binary search version, but I'll have to rethink it for the edge cases for the really ugly noncompliant MIDI
+
+// function searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, left, right) {
+//    function mean(...args) { // arithmetic mean, uses ...args so it is variadic even though we will only ever feed 2 args
+//       return args.reduce((accumulator, currentValue) => accumulator + currentValue) / args.length;
+//    }
+
+//    if (!left) left = 0;
+//    if (!right) right = track.playableMusic.length - 1;
+
+//    let middle = Math.floor(mean(left, right));
+
+//    if (left === middle || right === middle) {
+//       return {
+//             startIndex: middle,
+//             offset: startTimeOfLongestTrack - track.playableMusic[middle].startTime,
+//             startTime: track.playableMusic[middle].startTime
+//          };
+//    }
+
+//    if (track.playableMusic[middle].startTime >= startTimeOfLongestTrack && track.playableMusic[middle - 1].startTime <= startTimeOfLongestTrack) {
+//       return {
+//          startIndex: middle - 1,
+//          offset: startTimeOfLongestTrack - track.playableMusic[middle - 1].startTime,
+//          startTime: track.playableMusic[middle - 1].startTime
+//       };
+//    } else if (track.playableMusic[middle].startTime > startTimeOfLongestTrack) {
+//       return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, 0, middle);
+//    } else {
+//       return searchForCorrespondingStartIndex(track, startTimeOfLongestTrack, middle, right);
+//    }
+// }
 
 function computeColor(trackNum, velocity) {
    const color = colors[trackNum];
