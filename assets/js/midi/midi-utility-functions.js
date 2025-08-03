@@ -36,7 +36,8 @@ export const midiMessage = {
                     }
                 }
 
-                throw new Error("Encountered system exclusive message but never encountered end byte 0b11110111");
+                console.log("Encountered system exclusive message but never encountered end byte 0b11110111. Returning hardcoded length of 1.");
+                return 1;
             }},
             0b0001: {type: "MIDI time code quarter frame", dataBytes: 1},
             0b0010: {type: "song position pointer", dataBytes: 2},
