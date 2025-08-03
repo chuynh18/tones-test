@@ -46,18 +46,38 @@ export function parseTrack(track) {
             tempArray.length = 0;
             const time = parseVariableLengthValue(timeArray);
             const dataIndexStart = i + 1;
-            const potentialMidiMessage = track[dataIndexStart] >> 4;
+            const potentialMidiMessageByte = track[dataIndexStart];
+            const potentialMidiMessage = potentialMidiMessageByte >> 4;
             
             // the next byte after the delta-time VLV is a MIDI event
             if (midiMessage[potentialMidiMessage]) {
-                const dataIndexEnd = dataIndexStart + midiMessage[potentialMidiMessage].dataBytes + 1;
-                runningStatus = midiMessage[potentialMidiMessage];
+                const resolvedMidiMessage = midiMessage[potentialMidiMessage];
+                let dataIndexLength = resolvedMidiMessage.dataBytes + 1;
+
+                if (resolvedMidiMessage.type === "system message") {
+                    const systemMessageType = potentialMidiMessageByte & 0b00001111;
+                    console.log("System message lower 4 bytes:", systemMessageType);
+                    if (resolvedMidiMessage.lowerBytes[systemMessageType]) {
+                        const systemMessage = resolvedMidiMessage.lowerBytes[systemMessageType];
+                        console.log("System message type is:", systemMessage.type);
+                        if (systemMessage.dataBytes) {
+                            dataIndexLength = systemMessage.dataBytes;
+                        } else if (systemMessage.handler) {
+                            systemMessage.handler();
+                        } else {
+                            dataIndexLength = 1;
+                        }
+                    }
+                }
+
+                const dataIndexEnd = dataIndexStart + dataIndexLength;
+                runningStatus = resolvedMidiMessage;
 
                 parsedTrack.music.push(
                     createMessage(track, runningStatus.type, time, dataIndexStart, dataIndexEnd)
                 );
 
-                i += midiMessage[potentialMidiMessage].dataBytes + 1;
+                i += resolvedMidiMessage.dataBytes + 1;
             
             // For consecutive events of the same type, MIDI might not explicitly include the event byte
             // we need to keep track of the last event and reuse it

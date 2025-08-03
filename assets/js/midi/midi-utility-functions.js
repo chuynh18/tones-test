@@ -27,7 +27,25 @@ export const midiMessage = {
     0b1100: {type: "program change", dataBytes: 1},
     0b1101: {type: "channel pressure", dataBytes: 1},
     0b1110: {type: "pitch wheel change", dataBytes: 2},
-    0b1111: {type: "system message", dataBytes: 2} // not correct, but sufficient for now
+    0b1111: {type: "system message", lowerBytes: // lowerBytes = 4 least significant bits
+        {
+            0b0000: {type: "system exclusive", handler: function() {
+                console.log(this.type, "handler not implemented");
+            }},
+            0b0001: {type: "MIDI time code quarter frame", dataBytes: 1},
+            0b0010: {type: "song position pointer", dataBytes: 2},
+            0b0011: {type: "song select", dataBytes: 1},
+            0b0100: {type: "undefined (reserved)"},
+            0b0101: {type: "undefined (reserved)"},
+            0b1000: {type: "timing clock"},
+            0b1001: {type: "undefined (reserved)"},
+            0b1011: {type: "continue"},
+            0b1100: {type: "stop"},
+            0b1101: {type: "undefined (reserved)"},
+            0b1110: {type: "active sensing"},
+            0b1111: {type: "reset"}
+        }
+    }
 };
 
 // the 4 least significant bits in a control change message (that is, the 4 most significant bits are 0b1011)
