@@ -30,8 +30,13 @@ export default function parseMidiArrayBuffer(buffer) {
         tracks: tracks
     };
 
-    // ugh, ugly
-    midi.header.ticksPerSecond = midi.header.division * midi.tracks[0].track[81].data.musicTempo / 60;
+    // hardcode tempo for now if midi file doesn't encode tempo in the standard way
+    midi.header.ticksPerSecond = 512;
+    if (midi.tracks[0].track[81]) {
+        midi.header.ticksPerSecond = midi.header.division * midi.tracks[0].track[81].data.musicTempo / 60;
+    } else {
+        console.log("Warning: MIDI file declares tempo in non-standard way. Using hardcoded tempo.");
+    }
 
     return midi;
 }

@@ -29,8 +29,14 @@ export const midiMessage = {
     0b1110: {type: "pitch wheel change", dataBytes: 2},
     0b1111: {type: "system message", lowerBytes: // lowerBytes = 4 least significant bits
         {
-            0b0000: {type: "system exclusive", handler: function() {
-                console.log(this.type, "handler not implemented");
+            0b0000: {type: "system exclusive", handler: function(trackFragment) {
+                for (let i = 0; i < trackFragment.length; i++) {
+                    if (trackFragment[i] === SYSTEM_EXCLUSIVE_MESSAGE_END_BYTE) {
+                        return i;
+                    }
+                }
+
+                throw new Error("Encountered system exclusive message but never encountered end byte 0b11110111");
             }},
             0b0001: {type: "MIDI time code quarter frame", dataBytes: 1},
             0b0010: {type: "song position pointer", dataBytes: 2},
@@ -47,6 +53,8 @@ export const midiMessage = {
         }
     }
 };
+
+const SYSTEM_EXCLUSIVE_MESSAGE_END_BYTE = 0b11110111;
 
 // the 4 least significant bits in a control change message (that is, the 4 most significant bits are 0b1011)
 export const controlChangeMessages = {

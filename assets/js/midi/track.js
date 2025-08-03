@@ -63,12 +63,15 @@ export function parseTrack(track) {
                         if (systemMessage.dataBytes) {
                             dataIndexLength = systemMessage.dataBytes;
                         } else if (systemMessage.handler) {
-                            systemMessage.handler();
+                            dataIndexLength = systemMessage.handler(track.slice(i));
                         } else {
                             dataIndexLength = 1;
                         }
                     }
+                    resolvedMidiMessage.dataBytes = dataIndexLength;
+                    console.log(resolvedMidiMessage);
                 }
+
 
                 const dataIndexEnd = dataIndexStart + dataIndexLength;
                 runningStatus = resolvedMidiMessage;
