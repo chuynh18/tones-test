@@ -120,8 +120,6 @@ function getEarliestFirstNote(tracks) {
 
             if (event.type === "note on event" && event.velocity > 0 && event.pianoNote > 0 && event.pianoNote <= 88) {
                 time += event.time;
-                console.log("start time found at index", i, "and elapsed time", time);
-                console.log("the event that triggered start:", event);
                 return time;
             }
 
