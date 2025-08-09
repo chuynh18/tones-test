@@ -52,7 +52,7 @@ export function startPlayer(startIndex = 0) {
 }
 
 function processMidiEvent(midiEvent, startMillis, ticksPerSecond, trackNum, i) {
-   if (midiEvent.pianoNote) {
+   if (midiEvent.pianoNote > 0 && midiEvent.pianoNote <= 88) {
       (function(i){state.player.push(setTimeout(function() {
          playNoteForDuration(
             midiEvent.pianoNote,
