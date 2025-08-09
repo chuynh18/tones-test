@@ -97,9 +97,11 @@ function parseTracks(dataView, header) {
         }
     }
 
+    const earliestFirstNoteTime = getEarliestFirstNote(tracks);
+
     tracks.forEach(track => {
         if (track.track.music.length > 0) {
-            const postprocessed = postprocess(track.track.music);
+            const postprocessed = postprocess(track.track.music, earliestFirstNoteTime);
             track.playableMusic = postprocessed.music;
             track.startTime = postprocessed.startTime;
             track.endTime = postprocessed.endTime;
@@ -107,4 +109,29 @@ function parseTracks(dataView, header) {
     });
     
     return tracks;
+}
+
+function getEarliestFirstNote(tracks) {
+    console.log(tracks);
+    const firstNoteTimes = tracks.map(track => {
+        let time = 0;
+        for (let i = 0; i < track.track.music.length; i++) {
+            const event = track.track.music[i];
+
+            if (event.type === "note on event" && event.velocity > 0 && event.pianoNote > 0 && event.pianoNote <= 88) {
+                time += event.time;
+                console.log("start time found at index", i, "and elapsed time", time);
+                console.log("the event that triggered start:", event);
+                return time;
+            }
+
+            time += event.time;
+        }
+
+        return Infinity;
+    });
+
+    const firstNoteTime = Math.min(...firstNoteTimes);
+
+    return firstNoteTime === Infinity ? 0 : firstNoteTime;
 }

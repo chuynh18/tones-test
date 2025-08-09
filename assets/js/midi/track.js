@@ -160,14 +160,16 @@ function resolveNote(data) {
     };
 }
 
-export function postprocess(parsedTrack) {
+export function postprocess(parsedTrack, firstNoteTime) {
     const currentlyPlaying = {};
     const postprocessed = [];
     let runningTime = 0;
+    let correctedTime = 0;
 
     for (let i = 0; i < parsedTrack.length; i++) {
         const currentCommand = parsedTrack[i];
         runningTime += currentCommand.time;
+        correctedTime = (runningTime - firstNoteTime > 0) ? runningTime - firstNoteTime : 0;
 
         // a note is being stopped
         if ((currentCommand.type === midiMessage[0b1001].type &&
@@ -181,7 +183,7 @@ export function postprocess(parsedTrack) {
                 pianoNote: currentCommand.pianoNote,
                 velocity: currentlyPlaying[currentCommand.midiNote].velocity,
                 startTime: currentlyPlaying[currentCommand.midiNote].startTime,
-                duration: runningTime - currentlyPlaying[currentCommand.midiNote].startTime,
+                duration: correctedTime - currentlyPlaying[currentCommand.midiNote].startTime,
                 type: currentlyPlaying[currentCommand.midiNote].type
             };
 
@@ -189,11 +191,11 @@ export function postprocess(parsedTrack) {
             delete currentlyPlaying[currentCommand.midiNote];
         } else if (currentCommand.type === midiMessage[0b1001].type) {
             // a note is being started, track it in the currentlyPlaying object
-            currentCommand.startTime = runningTime;
+            currentCommand.startTime = correctedTime;
             currentlyPlaying[currentCommand.midiNote] = currentCommand;
         } else {
             // just pass the command on as-is if it's not a note on or note off event
-            currentCommand.startTime = runningTime;
+            currentCommand.startTime = correctedTime;
             postprocessed.push(currentCommand);
         }
     }
@@ -211,7 +213,7 @@ export function postprocess(parsedTrack) {
         }
     }
 
-    // this means that the track contains no musical data, just system messages, controal change events, etc.
+    // this means that the track contains no musical data, just system messages, control change events, etc.
     // While this isn't a compliant way to handle the track, discarding the track is easier
     if (!lastNote) return {};
 
